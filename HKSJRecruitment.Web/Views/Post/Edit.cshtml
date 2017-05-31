@@ -1,0 +1,60 @@
+﻿<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="height:300px;">
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td><label class="easyui-label">岗位名称：</label></td>
+                <td><input id="postname" name="postname" type="text" class="easyui-control easyui-validatebox" data-options="required:true,validType:'length[1,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">所属部门：</label></td>
+                <td>
+                    <select id="deptid" name="deptid" style="width:245px; height:34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">所属职务：</label></td>
+                <td>
+                    <select id="positionid" name="positionid" style="width:245px; height:34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">岗位描述：</label></td>
+                <td><textarea id="postdesc" name="postdesc" style="width:220px;height:70px" class="easyui-control easyui-validatebox" data-options="required:false,validType:'length[1,100]'"></textarea></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align:center; padding-top:10px;">
+                    <a id="btnWinEditOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnWinEditCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#positionid").combobox({
+            valueField: "id",
+            textField: "positionname",
+            url: urlPositionList,
+            loadFilter: function (data) {
+                return data.rows;
+            }
+        });
+    });
+    function initEdit() {
+        $("#positionid").combobox('clear');
+        $("#deptid").combotree('clear');
+    }
+    function LoadEditDataSuccess(data) {
+        $("#positionid").combobox('clear');
+        $("#deptid").combotree('clear');
+        $("#positionid").combobox('setValue', data.dto.positionid);
+        $("#deptid").combotree('setValue', data.dto.deptid);
+    }
+    function ValidateBefore() {
+        $("#deptid").combotree("checkData");
+        $("#positionid").combobox("checkData");
+    }
+</script>

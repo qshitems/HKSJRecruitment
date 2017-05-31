@@ -1,0 +1,154 @@
+﻿@{
+    ViewBag.Title = "招聘需求管理";
+}
+@section scripts
+{
+    <script type="text/javascript">
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "招聘需求";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        var urlDeptList = '@Url.Action("ListDepartment","Department")';
+        var urlPostList = '@Url.Action("ListPosition","Post")';
+
+        $(function () {
+            loadTree();
+            getPostData("postid");
+            getPostData("querypostid");
+        });
+        function loadTree() {
+            $.ajax({
+                type: "POST",
+                url: urlDeptList,
+                data: {},
+                dataType: "json",
+                success: function (resp) {
+                    var data = getTreeData(resp.rows);
+                    $("#deptid").combotree({
+                        lines: true,
+                        data: data
+                    });
+                    $("#querydeptid").combotree({
+                        lines: true,
+                        data: data
+                    });
+                }
+            });
+        }
+        function getTreeData(rows) {
+            var data = [];
+            $(rows).each(function () {
+                var obj = {};
+                obj.id = this.id;
+                obj.text = this.deptname;
+                obj.iconCls = this.depticon;
+                obj.state = 'open';
+                obj.attributes = {};
+                obj.children = [];
+                for (var key in this) {
+                    obj.attributes[key] = this[key];
+                }
+                if (this.parentid > 0) {
+                    var parentNode = getParentNode(data, this.parentid);
+                    if (parentNode === undefined) {
+                        data.push(obj);
+                    } else {
+                        parentNode.push(obj);
+                    }
+                }
+                else {
+                    data.push(obj);
+                }
+            });
+            return data;
+        }
+        function getParentNode(data, pid) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].attributes["id"] == pid) {
+                    return data[i].children;
+                } else if (data[i].children.length > 0) {
+                    var ret = getParentNode(data[i].children, pid);
+                    if (ret != undefined) {
+                        return ret;
+                    }
+                }
+            }
+            return undefined;
+        }
+        function getPostData(obj) {
+            $.ajax({
+                type: "POST",
+                url: urlPostList,
+                data: {},
+                dataType: "json",
+                success: function (data) {
+                    $("#" + obj).combobox({
+                        valueField: "id",
+                        textField: "positionname",
+                        editable: true,
+                        data: data.rows
+                    });
+                }
+            });
+            //$.ajax({
+            //    type: "POST",
+            //    url: urlPostList,
+            //    data: {},
+            //    dataType: "json",
+            //    success: function (data) {
+            //        $("#" + obj).combobox({
+            //            valueField: "id",
+            //            textField: "postname",
+            //            data: data.rows
+            //        });
+            //        if (defaultValue > 0) {
+            //            $("#" + obj).combobox('setValue', defaultValue);
+            //        }
+            //    }
+            //});
+
+        };
+    </script>
+}
+<body onkeydown="keySearch();">
+    <table id="dataGrid" title="招聘需求" style="display:none;">
+        <thead>
+            <tr>
+                <th data-options="field:'chk',checkbox:true"></th>
+                <th data-options="field:'deptname',sortable:true,width:40"> 需求部门</th>
+                <th data-options="field:'postname',sortable:true,width:40"> 需求职位</th>
+                <th data-options="field:'needquantity',sortable:true,width:30"> 招聘人数</th>
+                <th data-options="field:'havebeenquantity',sortable:true,width:40"> 已招聘人数</th>
+                <th data-options="field:'strishavebeen',sortable:true,width:40"> 需求状态</th>
+                <th data-options="field:'demander',sortable:true,width:40"> 面试官</th>
+                <th data-options="field:'strcuttime',sortable:true,width:40"> 截止时间</th>
+                <th data-options="field:'principal',sortable:true,width:40"> 负责人</th>
+                <th data-options="field:'interviewaddress',sortable:true,width:70"> 面试地址</th>
+                @*<th data-options="field:'postrequest',sortable:true,width:70"> 岗位要求</th>
+                    <th data-options="field:'jobresponsibility',sortable:true,width:70"> 工作职责</th>
+                    <th data-options="field:'remarks',sortable:true,width:70"> 备注</th>*@
+                <th data-options="field:'createby',sortable:true,width:40"> 创建人</th>
+                <th data-options="field:'createtime',sortable:true,width:50"> 创建时间</th>
+                <th data-options="field:'isfileword',sortable:true,width:50"> 是否有试题</th>
+            </tr>
+        </thead>
+        <tr>
+    </table>
+</body>
+<div style="display:none;">
+    @Html.Partial("Edit")
+    @Html.Partial("Details")
+    @Html.Partial("Import")
+    @Html.Partial("Search")
+    @Html.Partial("FileWord")
+</div>
+
+
+

@@ -1,0 +1,105 @@
+﻿<div id="winFileWord" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-33'" style="height:220px">
+    <form id="frmFileWord" enctype="multipart/form-data">
+
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr style="height:40px">
+                <td style=" width:20%">
+                    <label class="easyui-label">上传试题：</label>
+                    <input type="hidden" value="0" id="id" name="id" />
+                </td>
+                <td style=" width:70%">
+                    <input type="file" id="filewordname" name="filewordname" required="required" style="width:205px; height:34px;" />
+                </td>
+            </tr>
+            <tr style="height:40px">
+                <td><label class="easyui-label">下载试题：</label></td>
+                <td><a id="a1" name="a1" style=" height:34px;"></a></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a id="btnFileWordtOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnFileWordCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript" src="~/Content/scripts/ajaxfileupload.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnFileWordData").click(function () {
+            var rowData = null;
+            if ($("#dataGrid").treegrid("getSelections").length > 1) {
+                $.messager.alert(titleSuffix, '一次只能选择一行!');
+                return;
+            }
+            rowData = $("#dataGrid").datagrid("getSelected");
+
+            if (rowData == null) {
+                $.messager.alert(titleSuffix, '请选择需要的行!');
+                return;
+            }
+            $.post(urlDetail + '/' + rowData[dgKey], function (data) {
+                if (data.result) {
+                    try {
+                        $("#winFileWord form").form('load', data.dto);
+                    } catch (e) {
+                        alert(e);
+                    }
+                    if (typeof (LoadEditDataSuccess) === 'function') {
+                        LoadEditDataSuccess(data);
+                    }
+                } else {
+                    $.messager.show({ title: '加载提示', msg: '加载数据失败，' + data.msg + '!' });
+                }
+            }, "json");
+
+            $("#winFileWord").window("setTitle", titleSuffix + "试题");
+            $("#winFileWord").window("open");
+        });
+        $("#btnFileWordtOk").click(function () {
+            if ($.trim($("#filewordname").val()) == "") {
+                $.messager.show({ title: '上传提示', msg: "请选择文件" });
+                return;
+            }
+            var url = '@Url.Action("FileWordData")';
+            $.messager.progress({ title: "请稍候..." });
+            $.ajaxFileUpload({
+                url: url + "?pid= " + $("#id").attr("value"),
+                secureuri: false,
+                fileElementId: 'filewordname',
+                dataType: 'json',
+                success: function (data, status) {
+                    $.messager.progress("close");
+                    var result = data;
+                    if (result.result) {
+                        $.messager.show({ title: '提示', msg: (result.msg == undefined || result.msg == '') ? '成功' : result.msg });
+                        $(dgid).datagrid('load');
+                        $("#winFileWord").window("close");
+                    } else {
+                        $.messager.show({ title: '提示', msg: (result.msg == undefined || result.msg == '') ? '失败' : result.msg });
+                    }
+                },
+                error: function (data, status, e) {
+                    $.messager.progress("close");
+                    $.messager.show({ title: '提示', msg: "失败," + e });
+                }
+            });
+        });
+        $("#btnFileWordCancel").click(function () {
+            $("#winFileWord").window("close");
+        });
+    });
+    function LoadEditDataSuccess(data) {
+        $("#id").val(data.dto.id);
+        if (data.dto.fileword == null) {
+            $('#a1').removeAttr("href");
+            $("#a1").text("没有试题！")
+        }
+        else {
+            $('#a1').attr('href', '/UploadFiles/' + data.dto.fileword);
+            $("#a1").text(data.dto.fileword);
+        }
+    }
+</script>

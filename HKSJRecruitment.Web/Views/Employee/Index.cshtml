@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<table id="dataGrid" title="员工管理" style="display:none;">
+    <thead>
+        <tr>
+            <th data-options="field:'chk',checkbox:true"></th>
+            <th data-options="field:'name',sortable:true,width:60"> 姓名</th>
+            <th data-options="field:'uid',sortable:true,width:60"> 账号</th>
+            <th data-options="field:'sex',sortable:true,width:60">性别</th>
+            <th data-options="field:'idcard',sortable:true,width:60">身份证</th>
+            <th data-options="field:'tel',sortable:true,width:60">手机号</th>
+            <th data-options="field:'entrydate',sortable:true,width:60"> 入职日期</th>
+            <th data-options="field:'birthday',sortable:true,width:60"> 生日</th>
+            <th data-options="field:'dptname',sortable:true,width:60"> 部门</th>
+            <th data-options="field:'post',sortable:true,width:60"> 职位</th>
+            <th data-options="field:'schools',sortable:true,width:60">学校</th>
+            <th data-options="field:'education',sortable:true,width:60">学历</th>
+            <th data-options="field:'status',sortable:true,width:60"> 状态</th>
+        </tr>
+    </thead>
+    <tr>
+</table>
+<div style="display:none;">
+    @Html.Partial("Edit")
+    @Html.Partial("EditRight")
+    @*@Html.Partial("Details")*@
+    @Html.Partial("Search")
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "员工";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlPostList = '@Url.Action("ListPosition","Post")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        var urlGetID = '@Url.Action("GetID")';
+        function dgloadFilter(data) {
+            $(data.rows).each(function () {
+                this.sex = this.sex == "男" ? "男" : "女";
+
+            });
+            return data;
+        }
+        $(function () {
+            $("#btnResetUserPwd").click(function () {
+                var rowData = $(dgid).datagrid("getSelected");
+                if (rowData == null) {
+                    $.messager.alert("重置密码", '请选择员工!');
+                    return;
+                }
+                $.messager.confirm("重置密码", "确定要重置员工[" + rowData.name + "]的密码吗？", function (ret) {
+                    if (ret) {
+                        $.messager.progress({ title: "请稍候..." });
+                        $.ajax({
+                            type: "post",
+                            url: '@Url.Action("ResetUserPwd")',
+                            data: { uid: rowData.uid },
+                            dataType: "json",
+                            success: function (resp) {
+                                $.messager.progress("close");
+                                if (resp.result) {
+                                    $.messager.show({ title: '编辑提示', msg: (resp.msg == undefined || resp.msg == '') ? '编辑成功' : resp.msg });
+                                } else {
+                                    $.messager.show({ title: '编辑提示', msg: (resp.msg == undefined || resp.msg == '') ? '编辑失败' : "编辑失败," + resp.msg });
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

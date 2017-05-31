@@ -1,0 +1,263 @@
+﻿<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 710px; height:400px; padding: 5px; background: #fafafa;">
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <input type="hidden" value="" id="dptname" name="dptname" />
+        <input type="hidden" value="" id="post" name="post" />
+        <table style="margin-left:auto;margin-right:auto;width:95%; ">
+            <tr>
+                <td style="width:15%;">
+                    <label class="easyui-label">姓名：</label>
+                </td>
+                <td style="width:35%;">
+                    <input id="name" name="name" type="text" style="width:205px;height:34px;" class="easyui-textbox" data-options="required:true,validType:'length[0,20]'" />
+                </td>
+                <td style="width:15%;">
+                    <label class="easyui-label">账号：</label>
+                </td>
+                <td style="width:35%;">
+                    <input id="uid" name="uid" type="text" style="width:205px;height:34px;" class="easyui-textbox" data-options="required:true,validType:'length[0,20]'" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">性别：</label>
+                </td>
+                <td>
+                    <select id="sex" name="sex" style="width: 205px; height: 34px;" class="easyui-combobox" required="true"></select>
+                </td>
+                <td>
+                    <label class="easyui-label">身份证：</label>
+                </td>
+                <td>
+                    <input id="idcard" name="idcard" type="text" style="width: 205px;height:34px;" class="easyui-textbox" data-options="required:true,validType:'idcard'" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">手机号：</label>
+                </td>
+                <td>
+                    <input id="tel" name="tel" type="text" style="width: 205px;height:34px;" class="easyui-textbox" data-options="required:true,validType:'mobile'" />
+                </td>
+                <td>
+                    <label class="easyui-label">入职日期：</label>
+                </td>
+                <td>
+                    <input id="entrydate" name="entrydate" type="datetime" style="width:205px;height:34px;" class="easyui-datebox" required="true" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">生日：</label>
+                </td>
+                <td>
+                    <input id="birthday" name="birthday" type="datetime" style="width:205px;height:34px;" class="easyui-datebox" required="true" />
+                </td>
+                <td>
+                    <label class="easyui-label">部门：</label>
+                </td>
+                <td>
+                    <select id="dptid" name="dptid" style="width: 205px; height: 34px;" required="true"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">职位：</label>
+                </td>
+                <td>
+                    <select id="postid" name="postid" style="width: 205px; height: 34px;" required="true"></select>
+                </td>
+                <td>
+                    <label class="easyui-label">学校：</label>
+                </td>
+                <td>
+                    <input id="schools" name="schools" type="text" style="width:205px;height:34px;" class="easyui-textbox" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">学历：</label>
+                </td>
+                <td>
+                    <select id="education" name="education" style="width:205px;height:34px;" required="true"></select>
+                </td>
+                <td>
+                    <label class="easyui-label">状态：</label>
+                </td>
+                <td>
+                    <select id="status" name="status" style="width: 205px; height: 34px;" required="true"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">住址：</label>
+                </td>
+                <td colspan="3">
+                    <textarea id="address" name="address" style="width:535px;height:68px;" class="easyui-textbox" data-options="required:false,multiline:true,validType:'length[0,120]'"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align:center;">
+                    <a id="btnWinEditOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnWinEditCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    var urlDeptList = '@Url.Action("ListDepartment","Department")';
+    $(function () {
+        loadTree();
+        getPostData();
+        $("#sex").combobox({
+            valueField: "id",
+            textField: "text",
+            data: [{ id: '男', text: '男' }, { id: '女', text: '女' }]
+        });
+        $("#education").combobox({
+            valueField: "id",
+            textField: "text",
+            data: [{ id: '高中', text: '高中' }, { id: '大专', text: '大专' }, { id: '本科', text: '本科' }, { id: '硕士', text: '硕士' }, { id: '博士', text: '博士' }]
+        });
+        $("#status").combobox({
+            valueField: "id",
+            textField: "text",
+            data: [{ id: '在职', text: '在职' }, { id: '离职', text: '离职' }]
+        });
+        $("#name").textbox({
+            onChange: function (newValue, oldValue) {
+                if (!$(editid).data("edit")) {
+                    $.ajax({
+                        type: "POST",
+                        url: urlGetID + "?name=" + escape(newValue),
+                        data: {},
+                        dataType: "Json",
+                        success: function (resp) {
+                            $("#uid").textbox("setValue", resp.id);
+                        }
+                    });
+                }
+            }
+        });
+    });
+    function loadTree() {
+        $.ajax({
+            type: "POST",
+            url: urlDeptList,
+            data: {},
+            dataType: "json",
+            success: function (resp) {
+                var data = getTreeData(resp.rows);
+
+                $("#dptid").combotree({
+                    lines: true,
+                    data: data,
+                    onSelect: function (node) {
+                        $("#dptname").val(node.attributes["deptname"]);
+                    }
+                });
+            }
+        });
+    }
+    function getTreeData(rows) {
+        var data = [];
+        $(rows).each(function () {
+            var obj = {};
+            obj.id = this.id;
+            obj.text = this.deptname;
+            obj.iconCls = this.depticon;
+            obj.state = 'open';
+            obj.attributes = {};
+            obj.children = [];
+            for (var key in this) {
+                obj.attributes[key] = this[key];
+            }
+            var parentNode = getParentNode(data, this.parentid);
+            if (parentNode === undefined) {
+                data.push(obj);
+            } else {
+                parentNode.push(obj);
+            }
+        });
+        return data;
+    }
+    function getParentNode(data, pid) {
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].attributes["id"] == pid) {
+                return data[i].children;
+            } else if (data[i].children.length > 0) {
+                return getParentNode(data[i].children, pid);
+            }
+        }
+        return undefined;
+    }
+    function getPostData() {
+        $.ajax({
+            type: "POST",
+            url: urlPostList,
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                $("#postid").combobox({
+                    valueField: "id",
+                    textField: "positionname",
+                    data: data.rows,
+                    onSelect: function (data) {
+                        $("#post").val(data.positionname);
+                    }
+                });
+            }
+        });
+    }
+    function initEdit() {
+        $("#dptid").combotree('clear');
+        $("#postid").combobox('clear');
+        $("#entrydate").datebox('clear');
+        $("#birthday").datebox('clear');
+        $("#sex").combobox('clear');
+        $("#education").combobox('clear');
+        $("#status").combobox('clear');
+
+        $("#name").textbox({ disabled: false });
+        $("#uid").textbox({ disabled: false });
+
+        $("#name").textbox("setValue", "");
+        $("#uid").textbox("setValue", "");
+    }
+    function LoadEditDataSuccess(data) {
+        $("#dptid").combotree('clear');
+        $("#postid").combobox('clear');
+        $("#entrydate").datebox('clear');
+        $("#birthday").datebox('clear');
+        $("#sex").combobox('clear');
+        $("#education").combobox('clear');
+        $("#status").combobox('clear');
+
+        $("#dptid").combotree('setValue', data.dto.dptid);
+        $("#postid").combobox('setValue', data.dto.postid);
+
+        $("#dptname").val(data.dto.dptname);
+        $("#post").val(data.dto.post);
+
+        $("#entrydate").datebox('setValue', data.dto.entrydate);
+        $("#birthday").datebox('setValue', data.dto.birthday);
+
+        $("#sex").combobox("setValue", data.dto.sex);
+        $("#education").combobox("setValue", data.dto.education);
+
+        $("#status").combobox("setValue", data.dto.status);
+
+        $("#name").textbox({ disabled: true });
+        $("#uid").textbox({ disabled: true });
+    }
+    function ValidateBefore() {
+        $("#dptid").combotree("checkData");
+        $("#postid").combobox("checkData");
+        $("#sex").combobox("checkData");
+        $("#education").combobox("checkData");
+        $("#status").combobox("checkData");
+        $("#entrydate").datebox("checkData");
+        $("#birthday").datebox("checkData");
+    }
+</script>

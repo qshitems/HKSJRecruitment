@@ -1,0 +1,33 @@
+﻿<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 420px; height:260px; padding: 5px; background: #fafafa;">
+
+
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <input type="hidden" value="0" id="parentid" name="parentid" />
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td>参数名称：</td>
+                <td><input id="paramsname" name="paramsname" type="text" class="easyui-control easyui-validatebox" data-options="required:true" maxlength="30" /></td>
+            </tr>
+            <tr>
+                <td>参数排序：</td>
+                <td>
+                    <input id="sort" name="sort" style="height:34px;" value="1" class="easyui-control easyui-numberspinner" required="required" data-options="min:1,max:100,editable:true" />
+
+                </td>
+            </tr>
+
+            <tr>
+                <td>参数备注：</td>
+                <td><input id="remark" name="remark" type="text" maxlength="100" class="easyui-control" data-options="multiline:true" /></td>
+            </tr>
+
+        </table>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8 easyui-l-btn">
+                <a id="btnWinEditOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">确定</a>
+                <a id="btnWinEditCancel" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+            </div>
+        </div>
+    </form>
+</div>

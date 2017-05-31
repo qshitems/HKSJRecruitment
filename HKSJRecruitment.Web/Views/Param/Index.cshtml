@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "参数管理";
+}
+<div class="easyui-layout" style="width:98%;height:1000px;">
+    <div data-options="region:'west'" title="参数管理" style="width:250px; padding:10px">
+        <div id="divTypeTree"></div>
+    </div>
+    <div data-options="region:'center'" title="">
+        <table id="dataGrid" title="参数管理" style=" display:none">
+            <thead>
+                <tr>
+                    <th data-options="field:'chk',checkbox:true"></th>
+                    <th data-options="field:'paramsname',sortable:true,width:80"> 参数名</th>
+                    <th data-options="field:'sort',width:20"> 排序</th>
+                    <th data-options="field:'remark',width:120"> 备注</th>
+                </tr>
+            </thead>
+            <tr>
+        </table>
+    </div>
+</div>
+<div style="display:none">
+    @Html.Partial("Edit")
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "参数管理";
+        var urlParamList = '@Url.Action("ListParamType", "Param")';
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        $(function () {
+            loadTree();
+            $("#btnReload").unbind().bind("click", function () {
+                loadTree();
+            });
+        });
+        function loadTree() {
+            $(dgid).datagrid("load", { Parentid: @ViewBag.ParentId});
+            $.ajax({
+                type: "POST",
+                url: urlParamList,
+                data: {},
+                dataType: "json",
+                success: function (resp) {
+                    var data = getTreeData(resp.rows);
+                    $("#divTypeTree").tree({
+                        lines: true,
+                        data: data,
+                        animate: true,
+                        onClick: function (node) {
+                            $(dgid).datagrid("unselectAll");
+                            $(dgid).datagrid("load", { Parentid: node.id });
+                            $("#parentid").val(node.id);
+                        }
+                    });
+                }
+            });
+        }
+        function getTreeData(rows) {
+            var data = [];
+            $(rows).each(function () {
+                var obj = {};
+                obj.id = this.id;
+                obj.text = this.paramname;
+                obj.iconCls = this.paramicon;
+                obj.state = 'open';
+                obj.attributes = {};
+                obj.children = [];
+                for (var key in this) {
+                    obj.attributes[key] = this[key];
+                }
+                var parentNode = getParentNode(data, this.parentid);
+                if (parentNode === undefined) {
+                    data.push(obj);
+                } else {
+                    parentNode.push(obj);
+                }
+            });
+            return data;
+        }
+        function getParentNode(data, pid) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].attributes["id"] == pid) {
+                    return data[i].children;
+                } else if (data[i].children.length > 0) {
+                    return getParentNode(data[i].children, pid);
+                }
+            }
+            return undefined;
+        }
+    </script>
+}

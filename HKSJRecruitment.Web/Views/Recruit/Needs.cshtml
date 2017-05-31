@@ -1,0 +1,86 @@
+﻿
+
+<div id="winNeeds" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 520px; height:470px; padding: 5px; background: #fafafa;">
+    <div data-options="region:'center'" title="">
+        <table id="dataGridNeeds" style="display:none;">
+            <thead>
+                <tr>
+                    <th data-options="field:'chk',checkbox:true"></th>
+                    <th data-options="field:'deptname',width:60"> 需求部门</th>
+                    <th data-options="field:'postname',width:60"> 需求岗位</th>
+                    <th data-options="field:'needquantity',sortable:true,width:60"> 招聘人数</th>
+                    <th data-options="field:'havebeenquantity',sortable:true,width:60"> 已招聘人数</th>
+                    <th data-options="field:'demander',sortable:true,width:60"> 需求人</th>
+                    <th data-options="field:'strcuttime',sortable:true,width:60"> 截止时间</th>
+                </tr>
+            </thead>
+            <tr>
+        </table>
+    </div>
+    <div style="margin-top:5px; margin-left:auto;margin-right:auto; text-align:center;">
+        <a id="btnWinNeedsOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+        <a id="btnWinNeedsCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var urlNeedsList = '@Url.Action("List", "Hr_Need")';
+    $(function () {
+        $("#needsname").click(function () {
+            var postid = $('#postid').combobox('getValue');
+            if (postid == 0) {
+                $.messager.alert(titleSuffix, '请先选择要招聘的职位!');
+                return false;
+            }
+            $("#dataGridNeeds").datagrid({
+                url: urlNeedsList,
+                idField: "id",
+                queryParams: { Type: true, PostId: postid },
+                fit: false,
+                fitColumns: true,
+                striped: true,
+                singleSelect: true,
+                checkOnSelect: true,
+                selectOnCheck: true,
+                remoteSort: true,
+                multiSort: true,
+                pageSize: 10,
+                pagination: true,
+                height: 380,
+                method: 'post',
+                showFooter: true,
+                onLoadSuccess: function (data) {
+                    return false;
+                },
+                rowStyler: function (index, row) {
+                },
+                loadFilter: function (data) {
+                    return data;
+                }
+            });
+
+            $("#winNeeds").data("edit", true);
+            $("#winNeeds").window("setTitle", "招聘需求");
+            $("#winNeeds").window("open");
+
+        });
+        $("#btnWinNeedsCancel").click(function () {
+            $("#winNeeds").window("close");
+        });
+        $("#btnWinNeedsOk").click(function () {
+            if ($("#dataGridNeeds").datagrid("getSelections").length > 1) {
+                $.messager.alert(titleSuffix, '只能选择一行数据!');
+                return;
+            }
+            var rowData = $("#dataGridNeeds").datagrid("getSelected");
+            if (rowData == null) {
+                $.messager.alert(titleSuffix, '请选择数据!');
+                return;
+            }
+      
+            $("#winNeeds").window("close");
+        });
+    });
+</script>
+
+

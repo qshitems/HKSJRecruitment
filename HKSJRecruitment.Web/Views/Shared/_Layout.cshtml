@@ -1,0 +1,45 @@
+﻿@{
+    List<Tapp_Button> Buttons = ViewBag.Buttons as List<Tapp_Button>;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <meta name="renderer" content="webkit">
+    <link href="/Content/easyui/themes/bootstrap/easyui.css" rel="stylesheet" />
+    <link href="/Content/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="/Content/easyui/themes/easyuitype.css" rel="stylesheet" />
+    <script src="~/Content/scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="/Content/easyui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="/Content/easyui/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="~/Content/scripts/json2.min.js" type="text/javascript"></script>
+    <script src="~/Content/easyui/jquery.easyui.extend.js"></script>
+    <script src="~/Content/scripts/IdCardValidate.js"></script>
+    <script src="/Content/easyui/jquery.easyui.validateextend.js" type="text/javascript"></script>
+    <script src="/Content/scripts/main.js" type="text/javascript"></script>
+
+</head>
+<body>
+    @RenderBody()
+    <div id="conextMenuHeader">
+    </div>
+    <div id="contextMenuRow">
+    </div>
+    <div id="tb" style="display:none;">
+        @if (Buttons != null && Buttons.Count > 0)
+        {
+            foreach (var button in Buttons)
+            {
+                <a href="javascript:void(0)" id="@button.ButtonJsId" class="easyui-linkbutton" data-options="iconCls:'@button.ButtonClass',plain:true">@button.ButtonText</a>
+            }
+            <a href="javascript:void(0)" id="btnReload" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true">刷新</a>
+            <a href="javascript:void(0)" id="btnCheckModel" class="easyui-linkbutton" data-options="iconCls:'icon-chkbox',plain:true" data-type="0">单选</a>
+        }
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+

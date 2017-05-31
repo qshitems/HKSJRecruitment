@@ -1,0 +1,96 @@
+﻿<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width:800px; height:400px;">
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:98%;">
+            <tr>
+                <td><label class="easyui-label">上级部门：</label></td>
+                <td><select id="parentid" name="parentid" style="width:245px; height:34px;" class="easyui-control  easyui-validatebox"></select></td>
+                <td><label class="easyui-label">部门名称：</label></td>
+                <td><input id="deptname" name="deptname" type="text" class="easyui-control easyui-validatebox" data-options="required:true,validType:'length[1,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">部门类型：</label></td>
+                <td>
+                    <select id="depttype" name="depttype" style="width:245px; height:34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+
+                <td><label class="easyui-label">部门图标：</label></td>
+                <td><input id="depticon" name="depticon" type="text" class="easyui-control easyui-validatebox" data-options="required:true,validType:'length[0,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">负责人：</label></td>
+                <td><input id="deptmaster" name="deptmaster" type="text" class="easyui-control easyui-validatebox" data-options="required:true,validType:'length[0,20]'" maxlength="20"/></td>
+
+                <td><label class="easyui-label">电话：</label></td>
+                <td><input id="depttel" name="depttel" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'mobile'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">传真：</label></td>
+                <td><input id="deptfax" name="deptfax" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'phone'" /></td>
+
+                <td><label class="easyui-label">地址：</label></td>
+                <td><input id="deptaddr" name="deptaddr" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'length[0,120]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">邮箱：</label></td>
+                <td><input id="deptemail" name="deptemail" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'email'" /></td>
+
+                <td><label class="easyui-label">排序号：</label></td>
+                <td><input id="seqno" name="seqno" type="text" class="easyui-control easyui-validatebox" value="1" data-options="required:false,validType:'number'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">部门备注：</label></td>
+                <td colspan="3"><textarea id="deptdesc" name="deptdesc" class="easyui-control  easyui-validatebox" data-options="required:false,validType:'length[0,120]'" style=" width:450px; height:60px"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="padding-top:10px; text-align:center;">
+                    <a id="btnWinEditOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnWinEditCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#depttype").combobox({
+            valueField: 'id',
+            textField: 'text',
+            data: [{ id: '公司', text: '公司' }, { id: '部门', text: '部门' }]
+         });
+       
+        $("#btnWinEditOk").unbind().bind("click", function () {
+            var url = urlAdd;
+            if ($(editid + " #id").val() > 0) {
+                url = urlEdit;
+            }
+            $.messager.progress({ title: "请稍候..." });
+            $(editid + " form").form("submit", {
+                url: url,
+                onSubmit: function (param) {
+                    var isVidate = $(this).form('validate');
+                    if (!isVidate) {
+                        $.messager.progress("close");
+                    }
+                    return isVidate;
+                },
+                success: function (data) {
+                    $.messager.progress("close");
+                    var result = JSON.parse(data);
+                    if (result.result) {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑成功' : result.msg });
+                        $(editid).window("close");
+                        loadTree();
+                    } else {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑失败' : "编辑失败," + result.msg });
+                    }
+                }
+            });
+        });
+    });
+    function initEdit() {
+        $("#depttype").combobox("clear");
+        $("#depttype").combobox("setValue", "部门");
+        $("#depticon").val("icon-94");
+    }
+</script>

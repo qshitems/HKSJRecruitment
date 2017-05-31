@@ -1,0 +1,95 @@
+﻿<div id="winEditPwd" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-man'" style="height:300px;">
+    <style>
+        .easyui-label {
+            display: block;
+            font-size: 14px;
+            width: 100px;
+            font-weight: normal;
+        }
+
+        .easyui-control {
+            background-color: #ffffff;
+            background-image: none;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+            color: #555555;
+            display: block;
+            font-size: 14px;
+            height: 20px;
+            line-height: 1.42857;
+            padding: 6px 12px;
+            transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+            width: 220px;
+        }
+    </style>
+    <form id="frmEditPwd" method="post">
+        <table style="margin-left:auto;margin-right:auto;width:90%; margin-top:10px;">
+            <tr style="height:38px;">
+                <td><label class="easyui-label">原密码：</label></td>
+                <td><input id="oldpwd" name="oldpwd" style="width:245px; height:34px;" type="password" class="easyui-control easyui-validatebox" data-options="required:true,missingMessage:'密码不能为空'" /></td>
+            </tr>
+            <tr style="height:38px;">
+                <td><label class="easyui-label">新密码：</label></td>
+                <td>
+                    <input id="newpwd" name="newpwd" style="width:245px;height:34px;" type="password" class="easyui-control easyui-validatebox" data-options="required:true,missingMessage:'新密码不能为空'" />
+                </td>
+            </tr>
+            <tr style="height:38px;">
+                <td><label class="easyui-label">确认密码：</label></td>
+                <td>
+                    <input id="configpwd" name="configpwd" style="width:245px;height:34px;" type="password" class="easyui-control easyui-validatebox" data-options="required:true,missingMessage:'确认密码不能为空'" />
+                </td>
+            </tr>
+            <tr style="height:38px;">
+                <td>&nbsp;</td>
+                <td style="padding-top:10px;">
+                    <a id="btnWinEditPwdOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnWinEditPwdCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+    $(function () {
+        $("#editpass").click(function () {
+            $("#winEditPwd form")[0].reset();
+            $("#winEditPwd").window("setTitle", "修改密码");
+            $("#winEditPwd").window("open");
+        });
+        $("#btnWinEditPwdOk").click(function () {
+            $.messager.progress({ title: "请稍候..." });
+            var isValid = $("#frmEditPwd").form("validate");
+            if (!isValid) {
+                $.messager.progress("close");
+                $.messager.show({ title: '修改密码', msg: "表单验证未通过" });
+                return;
+            }
+            if ($.trim($("#newpwd").val()) != $.trim($("#configpwd").val())) {
+                $.messager.progress("close");
+                $.messager.show({ title: '修改密码', msg: "表单验证未通过,两次密码不一致" });
+                return;
+            }
+            $.ajax({
+                url: "/Account/UpdatePwd",
+                data: $("#frmEditPwd").serialize(),
+                dataType: "json",
+                success: function (data) {
+                    $.messager.progress("close");
+                    $.messager.show({ title: '修改密码', msg: data.msg });
+                    if (data.result) {
+                        $("#winEditPwd").window("close");
+                    }
+                },
+                error: function () {
+                    $.messager.progress("close");
+                    $.messager.show({ title: '修改密码结果', msg: '修改密码错误' });
+                }
+            });
+        });
+        $("#btnWinEditPwdCancel").click(function () {
+            $("#winEditPwd").window("close");
+        });
+    });
+</script>

@@ -1,0 +1,60 @@
+﻿<div id="winDetail" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-ok'" style="height:300px;">
+    <form>
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td><label class="easyui-label">上级菜单：</label></td>
+                <td>
+                    <label class="control-label" id="spparentid"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">菜单编号：</label></td>
+                <td><label class="control-label" id="spmenucode"></label></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">菜单文本：</label></td>
+                <td><label class="control-label" id="spmenutext"></label></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">UrL：</label></td>
+                <td><label class="control-label" id="spmenuurl"></label></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">图标：</label></td>
+                <td><label class="control-label" id="spmenuicon"></label></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">样式：</label></td>
+                <td><label class="control-label" id="spmenuclass"></label></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">排序：</label></td>
+                <td><label class="control-label" id="spseqno"></label></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">是否显示：</label></td>
+                <td>
+                    <label class="control-label" id="spisshow"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">备注：</label></td>
+                <td>
+                    <label class="control-label" id="spremarks"></label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a id="btnWinDetailClose" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+    function LoadDetailDataSuccess(data)
+    {
+        $("#spisshow").text(data.isshow == 0 ? "否" : "是");
+    }
+</script>

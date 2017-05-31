@@ -1,0 +1,94 @@
+﻿
+<div id="winCreate" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 420px; height:220px; padding: 5px; background: #fafafa;">
+    <form id="frmCreate" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td>
+                    <label class="easyui-label">管理员：</label>
+                </td>
+                <td colspan="3">
+                    <select id="createby" name="createby" style="width: 205px; height: 34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+            </tr>
+        </table>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8 easyui-l-btn">
+                <a id="btnWinCreateOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">确定</a>
+                <a id="btnWinCreateCancel" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<script type="text/javascript">
+    var urlCreateByList = '@Url.Action("ListCreateBy", "Recruit")';
+    $(function () {
+        $("#btnCreate").click(function () {
+            $("#createby").combobox({
+                valueField: "username",
+                textField: "name",
+                url: urlCreateByList,
+                loadFilter: function (data) {
+                    return data.rows;
+                }
+            });
+            var rowData = null;
+            if ($("#dataGrid").treegrid("getSelections").length > 1) {
+                $.messager.alert(titleSuffix, '编辑时一次只能选择一行!');
+                return;
+            }
+            rowData = $("#dataGrid").datagrid("getSelected");
+
+            if (rowData == null) {
+                $.messager.alert(titleSuffix, '请选择要编辑的行!');
+                return;
+            }
+            $.post(urlDetail + '/' + rowData[dgKey], function (data) {
+                if (data.result) {
+                    try {
+                        $("#winCreate form").form('load', data.dto);
+                    } catch (e) {
+                        alert(e);
+                    }
+                    if (typeof (LoadEditDataSuccess) === 'function') {
+                        LoadEditDataSuccess(data);
+                    }
+                } else {
+                    $.messager.show({ title: '加载提示', msg: '加载数据失败，' + data.msg + '!' });
+                }
+            }, "json");
+            $("#winCreate").data("Create", true);
+       
+
+            $("#winCreate").data("edit", true);
+            $("#winCreate").window("setTitle", "修改管理员");
+            $("#winCreate").window("open");
+        });
+        $("#btnWinCreateCancel").click(function () {
+            $("#winCreate").window("close");
+        });
+        $("#btnWinCreateOk").click(function () {
+            var url = '@Url.Action("EditCreateBy")';
+            $("#winCreate form").form("submit", { 
+                url: url,
+                success: function (data) {
+                    var result = JSON.parse(data);
+                    if (result.result) {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '修改管理员成功' : result.msg });
+                        $("#winCreate").window("close");
+                        var rowIndex = $(dgid).datagrid('getRowIndex', result.dto[dgKey]);
+                        $(dgid).datagrid('updateRow', { index: rowIndex, row: result.dto });
+                    } else {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑失败' : "修改管理员失败," + result.msg });
+                    }
+                }
+            });
+
+        });
+    });
+</script>
+
+

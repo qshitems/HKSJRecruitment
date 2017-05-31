@@ -1,0 +1,67 @@
+﻿
+<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 420px; height:499px; padding: 5px; background: #fafafa;">
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td><label class="easyui-label">姓名：</label></td>
+                <td><input id="name" name="name" type="text" class="easyui-control" disabled="disabled" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">电话：</label></td>
+                <td><input id="tel" name="tel" type="text" class="easyui-control" disabled="disabled" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">面试官：</label></td>
+                <td><input id="interviewer" name="interviewer" type="text" class="easyui-control" disabled="disabled" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">部门：</label></td>
+                <td><input id="dptname" name="dptname" type="text" class="easyui-control" disabled="disabled" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">职位：</label></td>
+                <td><input id="postname" name="postname" type="text" class="easyui-control" disabled="disabled" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">面试时间：</label></td>
+                <td>
+                    <input id="strinterview" name="strinterview" type="text" class="easyui-control" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">报到时间：</label></td>
+                <td>
+                    <input id="strhiretime" name="hiretime" type="text" style="height:34px;" class="easyui-control easyui-datebox" />
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">入职状态：</label></td>
+                <td><select id="entrytype" name="entrytype" style="width:245px; height:34px;" class="easyui-control"></select></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">备注：</label></td>
+                <td><input id="remark" name="remark" type="text" class="easyui-control" /></td>
+            </tr>
+        </table>
+
+
+        <div class="form-group">
+            <div class="easyui-l-btn">
+                <a id="btnWinEditOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">确定</a>
+                <a id="btnWinEditCancel" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    function initEdit() {
+        $("#strhiretime").datebox('setValue', '');
+    }
+    function LoadEditDataSuccess(data) {
+        $("#entrytype").combobox('clear');
+        $("#entrytype").combobox('setValue', data.dto.entrytype);
+        $("#strhiretime").datebox('setValue', data.dto.strhiretime);
+    }
+</script>

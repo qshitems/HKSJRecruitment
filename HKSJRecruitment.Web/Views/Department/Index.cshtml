@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "组织架构";
+}
+<div class="easyui-layout" style="width:98%;height:600px;">
+    <div id="divMenu" data-options="region:'north',collapsible:false" style="height:30px;"></div>
+    <div data-options="region:'west'" title="组织构架" style="width:300px; padding:10px">
+        <div id="divDeptTree"></div>
+    </div>
+    <div data-options="region:'center'" title="">
+        <div id="divDeptDetail"></div>
+    </div>
+</div>
+<div style="display:none;">
+    @Html.Partial("Edit")
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        var dgid = "#dataGrid";
+        var dgKey = "id";
+        var editid = "#winEdit";
+        var titleSuffix = "部门";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        $(function () {
+            $("#tb").show();
+            $("#divMenu").append($("#tb"));
+            loadTree();
+            $("#btnReload").unbind().bind("click", function () {
+                loadTree();
+            });
+            $("#btnEdit").unbind().click("click", function () {
+                $(editid + " form")[0].reset();
+                var rowData = $("#divDeptTree").tree("getSelected");
+                if (rowData == null) {
+                    $.messager.alert(titleSuffix, '请选择要编辑的行!');
+                    return;
+                }
+                $(editid + " form").form('load', rowData.attributes);
+                $(editid + " #depttype").combobox('clear');
+                $(editid + " #parentid").combotree('clear');
+                $(editid + " #depttype").combobox('setValue', rowData.attributes['depttype']);
+                $(editid + " #parentid").combotree('setValue', rowData.attributes['parentid']);
+                $(editid).data("edit", true);
+                var title = "修改" + titleSuffix;
+                $(editid).window("setTitle", title);
+                $(editid).window("open");
+            });
+            $("#btnDelete").unbind().click("click", function () {
+                var rowData = $("#divDeptTree").tree("getSelected");
+                if (rowData == null) {
+                    $.messager.alert("部门删除", '请选择要删除的行!');
+                    return;
+                }
+                $.messager.confirm("部门删除", '确定要删除选中行的数据吗?', function (result) {
+                    if (result) {
+                        var url = urlDeleteMulti + '/' + rowData.attributes[dgKey];
+                        var param = {};
+                        $.post(url, param, function (data) {
+                            if (data.result) {
+                                $.messager.show({ title: '部门删除提示', msg: '部门删除成功' });
+                                loadTree();
+                            } else {
+                                $.messager.show({ title: '部门删除提示', msg: '部门删除失败,' + data.msg });
+                            }
+                        }, 'json');
+                    }
+                });
+            });
+        });
+        function loadTree() {
+            $.ajax({
+                type: "POST",
+                url: urlList,
+                data: {},
+                dataType: "json",
+                success: function (resp) {
+                    var data = getTreeData(resp.rows);
+                    $("#divDeptTree").tree({
+                        lines: true,
+                        data: data,
+                        animate: true,
+                        onClick: function (node) {
+                            node = node.attributes;
+                            for (var key in node) {
+                                if (node[key] == null) node[key] = "";
+                            }
+                            var data = {
+                                total: 8,
+                                rows: [
+                                    { name: "名称", value: node.deptname },
+                                    { name: "负责人", value: node.deptmaster },
+                                    { name: "电话", value: node.depttel },
+                                    { name: "邮箱", value: node.deptemail },
+                                    { name: "传真", value: node.deptfax },
+                                    { name: "地址", value: node.deptaddr },
+                                    { name: "描述", value: node.deptdesc },
+                                    { name: "排序", value: node.seqno }
+                                ]
+                            };
+                            $("#divDeptDetail").propertygrid({
+                                data: data,
+                                showGroup: false,
+                                showHeader: false
+                            });
+                        }
+                    });
+                    var data2 = data;
+                    var obj = {};
+                    obj.id = 0;
+                    obj.text = "无上级";
+                    obj.iconCls = 'icon-94';
+                    obj.state = 'open';
+                    data2.unshift(obj);
+                    $("#parentid").combotree({
+                        lines: true,
+                        data: data2
+                    });
+                }
+            });
+            $("#divDeptDetail").propertygrid({
+                data: {
+                    total: 8,
+                    rows: [
+                        { name: "名称", value: "" },
+                        { name: "负责人", value: "" },
+                        { name: "电话", value: "" },
+                        { name: "邮箱", value: "" },
+                        { name: "传真", value: "" },
+                        { name: "地址", value: "" },
+                        { name: "描述", value: "" },
+                        { name: "排序", value: "" }
+                    ]
+                },
+                showGroup: false,
+                showHeader: false
+            });
+        }
+        function getTreeData(rows) {
+            var data = [];
+            $(rows).each(function () {
+                var obj = {};
+                obj.id = this.id;
+                obj.text = this.deptname;
+                obj.iconCls = this.depticon;
+                obj.state = 'open';
+                obj.attributes = {};
+                obj.children = [];
+                for (var key in this) {
+                    obj.attributes[key] = this[key];
+                }
+                if (this.parentid > 0) {
+                    var parentNode = getParentNode(data, this.parentid);
+                    if (parentNode === undefined) {
+                        data.push(obj);
+                    } else {
+                        parentNode.push(obj);
+                    }
+                }
+                else {
+                    data.push(obj);
+                }
+            });
+            return data;
+        }
+        function getParentNode(data, pid) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].attributes["id"] == pid) {
+                    return data[i].children;
+                } else if (data[i].children.length > 0) {
+                    var ret = getParentNode(data[i].children, pid);
+                    if (ret != undefined) {
+                        return ret;
+                    }
+                }
+            }
+            return undefined;
+        }
+    </script>
+}

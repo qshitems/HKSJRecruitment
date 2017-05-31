@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{090B8F60-15CE-4C8D-9EF7-014527EA19CE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HKSJRecruitment.Models</RootNamespace>
+    <AssemblyName>HKSJRecruitment.Models</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\HKSJRecruitmentContext.cs" />
+    <Compile Include="Models\HR_Employee.cs" />
+    <Compile Include="Models\Mapping\HR_EmployeeMap.cs" />
+    <Compile Include="Models\Mapping\Report_ColourSelectManagerMap.cs" />
+    <Compile Include="Models\Mapping\Report_CreatestatisticsdayMap.cs" />
+    <Compile Include="Models\Mapping\Report_CreatestatisticsMonthMap.cs" />
+    <Compile Include="Models\Mapping\Report_NeedsMap.cs" />
+    <Compile Include="Models\Mapping\Report_ZhiweistatisticsDayMap.cs" />
+    <Compile Include="Models\Mapping\Report_ZhiweistatisticsMonthMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_ButtonMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_MenuMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_ParamMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_ParamTypeMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_RoleMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_Role_RightMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_UserMap.cs" />
+    <Compile Include="Models\Mapping\Tapp_User_RoleMap.cs" />
+    <Compile Include="Models\Mapping\TErp_AgileboyMap.cs" />
+    <Compile Include="Models\Mapping\TErp_DepartmentMap.cs" />
+    <Compile Include="Models\Mapping\TErp_PositionMap.cs" />
+    <Compile Include="Models\Mapping\TErp_PostMap.cs" />
+    <Compile Include="Models\Mapping\THR_NeedsMap.cs" />
+    <Compile Include="Models\Mapping\THR_RecruitMap.cs" />
+    <Compile Include="Models\Mapping\Vapp_UserRightMap.cs" />
+    <Compile Include="Models\Report_ColourSelectManager.cs" />
+    <Compile Include="Models\Report_Createstatisticsday.cs" />
+    <Compile Include="Models\Report_CreatestatisticsMonth.cs" />
+    <Compile Include="Models\Report_Needs.cs" />
+    <Compile Include="Models\Report_ZhiweistatisticsDay.cs" />
+    <Compile Include="Models\Report_ZhiweistatisticsMonth.cs" />
+    <Compile Include="Models\Tapp_Button.cs" />
+    <Compile Include="Models\Tapp_Menu.cs" />
+    <Compile Include="Models\Tapp_Param.cs" />
+    <Compile Include="Models\Tapp_ParamType.cs" />
+    <Compile Include="Models\Tapp_Role.cs" />
+    <Compile Include="Models\Tapp_Role_Right.cs" />
+    <Compile Include="Models\Tapp_User.cs" />
+    <Compile Include="Models\Tapp_User_Role.cs" />
+    <Compile Include="Models\TErp_Agileboy.cs" />
+    <Compile Include="Models\TErp_Department.cs" />
+    <Compile Include="Models\TErp_Position.cs" />
+    <Compile Include="Models\TErp_Post.cs" />
+    <Compile Include="Models\THR_Needs.cs" />
+    <Compile Include="Models\THR_Recruit.cs" />
+    <Compile Include="Models\Vapp_UserRight.cs" />
+    <Compile Include="proModels\EmployeeDto.cs" />
+    <Compile Include="proModels\HR_Employee.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Mvc\Common.Mvc.csproj">
+      <Project>{54ba2d5c-8ca0-40b3-a7df-ef4b002c5657}</Project>
+      <Name>Common.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HKSJRecruitment.DemoTest\HKSJRecruitment.DemoTest.csproj">
+      <Project>{6cd52991-0166-43ef-977d-92b546758b60}</Project>
+      <Name>HKSJRecruitment.DemoTest</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

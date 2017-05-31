@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "按钮";
+}
+<div class="easyui-layout" style="width:98%;height:636px;">
+    <div data-options="region:'west'" title="菜单" style="width:300px; padding:10px">
+        <div id="divMenuTree"></div>
+    </div>
+    <div data-options="region:'center'" title="">
+        <table id="dataGrid" title="按钮" style="display:none;">
+            <thead>
+                <tr>
+                    <th data-options="field:'chk',checkbox:true"></th>
+                    <th data-options="field:'menuid',sortable:true,width:60"> 所属菜单</th>
+                    <th data-options="field:'buttontext',sortable:true,width:60"> 按钮文本</th>
+                    <th data-options="field:'handlerurl',sortable:true,width:60"> UrL</th>
+                    <th data-options="field:'buttonjsid',sortable:true,width:60"> 按钮页面Id</th>
+                    <th data-options="field:'buttonicon',sortable:true,width:60"> 图标</th>
+                    <th data-options="field:'buttonclass',sortable:true,width:60"> 样式</th>
+                    <th data-options="field:'seqno',sortable:true,width:60"> 排序</th>
+                    <th data-options="field:'isshow',sortable:true,width:60"> 是否显示</th>
+                    <th data-options="field:'remarks',sortable:true,width:60"> 备注</th>
+                </tr>
+            </thead>
+            <tr>
+        </table>
+    </div>
+</div>
+<div style="display:none;">
+    @Html.Partial("Edit")
+    @Html.Partial("Details")
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        var menudto = @Html.Raw(ViewBag.Menus);
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "按钮";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        function dgloadFilter(data) {
+            $(data.rows).each(function () {
+                this.isshow = this.isshow == 1 ? "是" : "否";
+                var menu = $("#menuid option[value='" + this.menuid + "']");
+                this.menuid = menu.closest('optgroup').attr("label") + "-" + menu.text();
+            });
+            return data;
+        }
+        $(function () {
+            loadTree();
+        });
+        function loadTree() {
+            var data = getTreeData(menudto);
+            $("#divMenuTree").tree({
+                lines: true,
+                data: data,
+                animate: true,
+                onClick: function (node) {
+                    $(dgid).datagrid("unselectAll");
+                    $(dgid).datagrid("load", { menuid: node.id });
+                }
+            });
+        }
+        function getTreeData(rows) {
+            var data = [];
+            $(rows).each(function () {
+                var obj = {};
+                obj.id = this.id;
+                obj.text = this.menutext;
+                obj.iconCls = this.menuicon;
+                obj.state = 'open';
+                obj.attributes = {};
+                obj.children = [];
+                for (var key in this) {
+                    obj.attributes[key] = this[key];
+                }
+                if(this.parentid > 0){
+                    var parentNode = getParentNode(data, this.parentid);
+                    if (parentNode === undefined) {
+                        data.push(obj);
+                    } else {
+                        parentNode.push(obj);
+                    }
+                }
+                else{
+                    data.push(obj);
+                }
+            });
+            return data;
+        }
+        function getParentNode(data, pid) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].attributes["id"] == pid) {
+                    return data[i].children;
+                } else if (data[i].children.length > 0) {
+                    var ret = getParentNode(data[i].children, pid);
+                    if(ret != undefined){
+                        return ret;
+                    }
+                }
+            }
+            return undefined;
+        }
+    </script>
+}

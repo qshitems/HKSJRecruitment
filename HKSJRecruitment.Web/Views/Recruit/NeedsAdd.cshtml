@@ -1,0 +1,147 @@
+﻿<div id="winNeedsAdd" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 700px; height:600px; padding: 5px; background: #fafafa;">
+    <form id="frmNeedsAdd" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td style=" width:13%">
+                    <label class="easyui-label">需求部门：</label>
+                </td>
+                <td style=" width:35%">
+                    <select id="deptid" name="deptid" style="width: 205px; height: 34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+                <td style=" width:13%"><label class="easyui-label">需求职位：</label></td>
+                <td style=" width:35%">
+                    <select id="needspostid" name="needspostid" style="width:205px; height:34px;" class="easyui-control  easyui-combobox easyui-validatebox" data-options="required:true"></select>
+                </td>
+            </tr>
+
+            <tr>
+                <td><label class="easyui-label">招聘人数：</label></td>
+                <td><input id="needquantity" name="needquantity" type="text" style="width:180px;" class="easyui-control easyui-validatebox" data-options="required:true,validType:'number'" /></td>
+                <td><label class="easyui-label">已招聘人数：</label></td>
+                <td><input id="havebeenquantity" name="havebeenquantity" style="width:180px;" type="text" class="easyui-control easyui-validatebox" readonly="readonly" /></td>
+            </tr>
+
+            <tr>
+                <td><label class="easyui-label">面试官：</label></td>
+                <td><input id="demander" name="demander" style="width:180px;" type="text" class="easyui-control  easyui-validatebox" data-options="required:true,validType:'length[1,20]'" /></td>
+                <td><label class="easyui-label">截止时间：</label></td>
+                <td><input id="cuttime" name="cuttime" type="text" style="width:205px; height:34px;" class="easyui-control easyui-datebox" data-options="required:true" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">负责人：</label></td>
+                <td>
+                    <input id="principal" name="principal" style="width:180px;" type="text" class="easyui-control  easyui-validatebox" data-options="validType:'length[1,20]'" />
+                </td>
+                <td><label class="easyui-label">面试地址：</label></td>
+                <td>
+                    <input id="interviewaddress" name="interviewaddress" style="width:180px;" type="text" class="easyui-control  easyui-validatebox" data-options="validType:'length[1,100]'" />
+                </td>
+            </tr>
+
+            <tr>
+                <td><label class="easyui-label">岗位要求：</label></td>
+                <td colspan="3">
+                    <textarea id="postrequest" name="postrequest" class="easyui-control  easyui-validatebox" style="height:80px; width:95%" data-options="required:false,validType:'length[0,500]'"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">工作职责：</label></td>
+                <td colspan="3">
+                    <textarea id="jobresponsibility" name="jobresponsibility" class="easyui-control  easyui-validatebox" style="height:80px;width:95%" data-options="required:false,validType:'length[0,500]'"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">备注：</label></td>
+                <td colspan="3">
+                    <textarea id="remarks" name="remarks" class="easyui-control  easyui-validatebox" style="height:40px;width:95%" data-options="required:false,validType:'length[0,500]'"></textarea>
+                </td>
+            </tr>
+
+        </table>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8 easyui-l-btn">
+                <a id="btnNeedsAddOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">确定</a>
+                <a id="btnNeedsAddCancel" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#cuttime").datebox({
+            onSelect: function (date) {
+                if (date < new Date()) {
+                    $.messager.alert('验证提示', '截止时间不能小于当前时间');
+                    $("#cuttime").datebox('setValue', '');
+                }
+            }
+        });
+
+        $("#btnNeeds").click(function () {
+            $("#demander").val('');
+            $("#needquantity").val('');
+            $("#principal").val('');
+            $("#interviewaddress").val('');
+            $("#postrequest").val('');
+            $("#jobresponsibility").val('');
+            $("#remarks").val('');
+            $("#deptid").combotree('setValue', $("#dptid").combotree('getValue'));
+
+            $("#cuttime").datebox('setValue', '');
+            $("#needspostid").combobox({
+                valueField: "id",
+                textField: "positionname",
+                url: urlPostList,
+                loadFilter: function (data) {
+                    return data.rows;
+                },
+                onLoadSuccess: function (data) {
+                    $("#needspostid").combobox("setValue", $("#postid").combotree('getValue'));
+                }
+            });
+            $("#winNeedsAdd").window("setTitle", "招聘需求");
+            $("#winNeedsAdd").window("open");
+        });
+        $("#btnNeedsAddCancel").click(function () {
+            $("#winNeedsAdd").window("close");
+        });
+        $("#btnNeedsAddOk").click(function () {
+            //$.messager.progress({ title: "请稍候..." });
+            if (typeof (ValidateBefore) == "function") {
+                ValidateBefore();
+            }
+            var isVidate = $("#winNeedsAdd form").form('validate');
+
+            if (typeof (ValidateAfer) == "function") {
+
+                isVidate = ValidateAfer(isVidate);
+            }
+            if (!isVidate) {
+                $.messager.progress("close");
+                $.messager.show({ title: '表单验证', msg: '表单验证失败' });
+                return;
+            }
+            var url = '@Url.Action("Add", "Hr_Need")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: $("#winNeedsAdd form").serialize(),
+                dataType: "json",
+                success: function (data) {
+                    var result = data;
+                    if (result.result) {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑成功' : result.msg });
+                        $("#winNeedsAdd").window("close");
+                        $("#tdNeeds").hide();
+
+                    } else {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑失败' : "编辑失败" + result.msg });
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>

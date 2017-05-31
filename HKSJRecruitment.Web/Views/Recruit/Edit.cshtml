@@ -1,0 +1,305 @@
+﻿<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="width: 700px; height:500px; padding: 5px; background: #fafafa;">
+
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td style=" width:14%">
+                    <label class="easyui-label ">姓名：</label>
+                </td>
+                <td style="width:35%">
+                    <input id="name" name="name" type="text" style="width:180px;" maxlength="20" class=" easyui-control easyui-validatebox" data-options="required:true" />
+                </td>
+                <td style=" width:14%">
+                    <label class="easyui-label">电话：</label>
+                </td>
+                <td style="width:35%">
+                    <input id="tel" name="tel" type="text" style="width: 180px;" class="easyui-control easyui-validatebox" data-options="required:true, validType:'mobile'" maxlength="11" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">部门：</label>
+                </td>
+                <td>
+                    <select id="dptid" name="dptid" style="width: 205px; height: 34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+                <td>
+                    <label class="easyui-label">职位：</label>
+                </td>
+                <td>
+                    <select id="postid" name="postid" style="width:205px; height:34px;" class="easyui-control  easyui-combobox easyui-validatebox" data-options="required:true"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">状态：</label>
+                </td>
+                <td>
+                    <select id="status" name="status" style="width: 205px; height: 34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select>
+                </td>
+                <td>
+                    <label class="easyui-label">面试时间：</label>
+                </td>
+                <td>
+                    <input id="interview" name="interview" type="datetime" style="width:206px;height:34px;" class="easyui-datebox" data-options="required:true" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">面试官：</label>
+                </td>
+                <td>
+                    <input id="interviewer" name="interviewer" type="text" class="easyui-control" maxlength="20" style="width:180px" />
+                </td>
+                <td>
+                    <label class="easyui-label">备注：</label>
+                </td>
+                <td>
+                    <input id="remark" name="remark" type="text" class="easyui-control" maxlength="200" style="width:180px" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label class="easyui-label">报到时间：</label>
+                </td>
+                <td>
+                    <input id="hiretime" name="hiretime" type="datetime" style="width:206px;height:34px;" class="easyui-datebox" />
+
+
+                </td>
+                <td>
+                    <label class="easyui-label">邮箱：</label>
+                </td>
+                <td>
+                    <input id="email" name="email" type="text" style="width: 180px;" class="easyui-control easyui-validatebox " data-options=" validType:'email'" maxlength="30" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">简历地址：</label>
+                </td>
+                <td colspan="3">
+
+                    <textarea id="userurl" name="userurl" class="easyui-control  easyui-validatebox" style="height:40px;width:95%" data-options="required:false,validType:'length[0,100]'"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="easyui-label">招聘需求：</label>
+                </td>
+                <td>
+                    <select id="needsid" name="needsid" style="width:205px; height:34px;" class=" easyui-control "></select>
+                </td>
+                <td></td>
+                <td id="tdNeeds">
+                    <a id="btnNeeds" class="easyui-linkbutton easyui-btn" href="javascript:void(0)" style="width:100px">新增招聘需求</a>
+
+                </td>
+            </tr>
+        </table>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8 easyui-l-btn">
+                <a id="btnWinEditOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">确定</a>
+                <a id="btnWinEditCancel" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<script type="text/javascript">
+    //var objstatus = 0;
+    var objIsHaveBeen = 0;
+    var objdptid = 0;
+    var objpostid = 0;
+    $(function () {
+        $("#btnWinEditOk").unbind("click").bind("click", function () {
+            var url = urlAdd;
+            if ($("#winEdit #id").val() > 0) {
+                url = urlEdit;             
+            }
+            $.messager.progress({ title: "请稍候..." });
+            if (typeof (ValidateBefore) == "function") {
+                ValidateBefore();
+            }
+            var isVidate = $("#winEdit form").form('validate');
+
+            if (typeof (ValidateAfer) == "function") {
+
+                isVidate = ValidateAfer(isVidate);
+            }
+            if (!isVidate) {
+                $.messager.progress("close");
+                $.messager.show({ title: '表单验证', msg: '表单验证失败' });
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: $("#winEdit  form").serialize(),
+                dataType: "json",
+                success: function (data) {
+                    $.messager.progress("close");
+                    var result = data;
+                    if (typeof (EditFinish) == "function") {
+                        EditFinish(result);
+                        return;
+                    }
+                    if (result.result) {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑成功' : result.msg });
+                        $("#winEdit").window("close");
+                        if ($("#winEdit").data("edit")) {
+                            if (tgFlag) {
+                                $(dgid).treegrid('update', { id: result.dto[dgKey], row: result.dto });
+                            } else {
+                                var rowIndex = $(dgid).datagrid('getRowIndex', result.dto[dgKey]);
+                                $("#dataGrid").datagrid('updateRow', { index: rowIndex, row: result.dto });
+                            }
+                        } else {
+                            if (tgFlag) {
+                                $("#dataGrid").treegrid('reload');
+                            }
+                            else {
+                                $("#dataGrid").datagrid('insertRow', { index: 0, row: result.dto });
+                            }
+                        }
+                    } else {
+                        if (result.msg == '招聘人数已达到招聘需求数,请新增或变更招聘需求!')
+                        {
+                            $("#needsid").combobox('clear');
+                            $("#needsid").combobox('clearItem');
+                            $("#tdNeeds").show();
+                        }
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑失败' : "编辑失败" + result.msg });
+                    }
+                }
+            });
+
+        });
+        $("#dptid").combotree({
+            onSelect: function () {
+                $("#needsid").combobox('clear');
+
+                $("#needsid").combobox('clearItem');
+            }
+        });
+        $("#postid").combobox({
+            onSelect: function () {
+                $("#needsid").combobox('clear');
+                $("#needsid").combobox('clearItem');
+            }
+        });
+        $("#needsid").combobox({
+            onShowPanel: function () {
+                var vdptid = $('#dptid').combotree('getValue');
+                var vpostid = $('#postid').combobox('getValue');
+                if (vdptid == 0) {
+                    $.messager.alert(titleSuffix, '请先选择要招聘的部门!');
+                }
+                else if (vpostid == 0)
+                { $.messager.alert(titleSuffix, '请先选择要招聘的职位!'); }
+                else {
+                    //if (objstatus == 82)
+                    //{ $.messager.alert(titleSuffix, '已录用的招聘信息不能修改!'); }
+                    //else {
+                    //if (vdptid == objdptid && vpostid == objpostid) {
+                    //    if (objIsHaveBeen == 1)
+                    //    { $.messager.alert(titleSuffix, '招聘人数已达到招聘需求数,招聘状态为【已完成】,请在招聘需求中变更招聘人数'); }
+                    //    else {
+                    //        getNeedsData("needsid", vdptid, vpostid, 0, 0);
+                    //    }
+                    //}
+                    //else {
+                    getNeedsData("needsid", vdptid, vpostid, 0, 0);
+                    //}
+                }
+
+                //}
+            },
+            onSelect: function () {
+                var vneedsid = $('#needsid').combobox('getValue');
+                $.ajax({
+                    type: "POST",
+                    url: urlNeedsDetail,
+                    data: "id=" + vneedsid,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.dto.ishavebeen == 1) {
+                            $("#needsid").combobox('clear');
+                            $.messager.alert(titleSuffix, '招聘人数已达到招聘需求数,招聘状态为【已完成】,请在招聘需求中变更招聘人数');
+                        }
+                    }
+                });
+
+            }
+        });
+
+    });
+    function initEdit() {
+        $("#tdNeeds").hide();
+        $("#dptid").combotree('clear');
+        $("#postid").combobox('clear');
+        $("#status").combobox('clear');
+        $("#needsid").combobox('clear');
+        $("#interview").datebox('setValue', '');
+        $("#hiretime").datebox('setValue', '');
+        objIsHaveBeen = 0;
+        objstatus = 0;
+    }
+    function LoadEditDataSuccess(data) {
+        $("#dptid").combotree('clear');
+        $("#postid").combobox('clear');
+        $("#status").combobox('clear');
+        $("#interview").datebox('setValue', '');
+        $("#hiretime").datebox('setValue', '');
+        $("#dptid").combotree('setValue', data.dto.dptid);
+        $("#postid").combobox("setValue", data.dto.postid);
+        $("#status").combobox('setValue', data.dto.status);
+        $("#interview").datebox('setValue', data.dto.interview);
+        $("#hiretime").datebox('setValue', data.dto.hiretime);
+        objIsHaveBeen = data.dto.ishavebeen;
+        // objstatus = data.dto.status;
+        objdptid = data.dto.dptid;
+        objpostid = data.dto.postid;
+        getNeedsData("needsid", data.dto.dptid, data.dto.postid, data.dto.needsid, 2);
+
+    }
+
+    function ValidateBefore() {
+        $("#dptid").combotree("checkData");
+        $("#postid").combobox("checkData");
+        $("#needsid").combobox("checkData");
+        $("#status").combobox("checkData");
+        $("#interview").datebox("checkData");
+        $("#hiretime").datebox("checkData");
+    }
+    function getNeedsData(obj, dptidValue, postValue, needsidValue, isHaveBeenValue) {
+        var url = urlNeedsList + "?DeptId=" + dptidValue + "&PostId=" + postValue + "&IsHaveBeen=" + isHaveBeenValue;
+        $("#" + obj).combobox({
+            valueField: "id",
+            textField: "strdeptpost",
+            url: url,
+            loadFilter: function (data) {
+                return data.rows;
+            },
+            onLoadSuccess: function (data) {
+                if (needsidValue == 0) {
+                    if (data == "") {
+                        $("#tdNeeds").show();
+                    }
+                    else {
+                        $("#tdNeeds").hide();
+                    }
+
+                }
+                else {
+                    $("#" + obj).combobox("setValue", needsidValue);
+                }
+            }
+        });
+    }
+</script>

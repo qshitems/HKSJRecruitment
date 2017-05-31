@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "岗位管理";
+}
+<div class="easyui-layout" style="width:98%;height:636px;">
+    <div data-options="region:'west'" title="组织构架" style="width:300px; padding:10px">
+        <div id="divDeptTree"></div>
+    </div>
+    <div data-options="region:'center'" title="">
+        <table id="dataGrid" title="岗位" style="display:none;">
+            <thead>
+                <tr>
+                    <th data-options="field:'chk',checkbox:true"></th>
+                    <th data-options="field:'postname',sortable:true,width:60"> 岗位各称</th>
+                    <th data-options="field:'deptname',width:60"> 部门名称</th>
+                    <th data-options="field:'positionname',width:60"> 职务名称</th>
+                    <th data-options="field:'positionlevel',width:60"> 职务级别</th>
+                    <th data-options="field:'postdesc',sortable:true,width:180"> 岗位描述</th>
+                </tr>
+            </thead>
+            <tr>
+        </table>
+    </div>
+</div>
+<div style="display:none;">
+@Html.Partial("Edit")
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "岗位";
+        var urlDeptList = '@Url.Action("ListDepartment","Department")';
+        var urlPositionList = '@Url.Action("ListPosition")';
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        $(function () {
+            loadTree();
+        });
+        function loadTree() {
+            $.ajax({
+                type: "POST",
+                url: urlDeptList,
+                data: {},
+                dataType: "json",
+                success: function (resp) {
+                    var data = getTreeData(resp.rows);
+                    $("#divDeptTree").tree({
+                        lines: true,
+                        data: data,
+                        animate: true,
+                        onClick: function (node) {
+                            $(dgid).datagrid("unselectAll");
+                            $(dgid).datagrid("load", { deptid: node.id });
+                        }
+                    });
+                    $("#deptid").combotree({
+                        lines: true,
+                        data: data
+                    });
+                }
+            });
+        }
+        function getTreeData(rows) {
+            var data = [];
+            $(rows).each(function () {
+                var obj = {};
+                obj.id = this.id;
+                obj.text = this.deptname;
+                obj.iconCls = this.depticon;
+                obj.state = 'open';
+                obj.attributes = {};
+                obj.children = [];
+                for (var key in this) {
+                    obj.attributes[key] = this[key];
+                }
+                if (this.parentid > 0) {
+                    var parentNode = getParentNode(data, this.parentid);
+                    if (parentNode === undefined) {
+                        data.push(obj);
+                    } else {
+                        parentNode.push(obj);
+                    }
+                }
+                else {
+                    data.push(obj);
+                }
+            });
+            return data;
+        }
+        function getParentNode(data, pid) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].attributes["id"] == pid) {
+                    return data[i].children;
+                } else if (data[i].children.length > 0) {
+                    var ret = getParentNode(data[i].children, pid);
+                    if (ret != undefined) {
+                        return ret;
+                    }
+                }
+            }
+            return undefined;
+        }
+    </script>
+}

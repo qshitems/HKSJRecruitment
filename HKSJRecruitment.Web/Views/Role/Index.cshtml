@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@section scripts
+{
+    <script type="text/javascript">
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "角色";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+    </script>
+}
+<table id="dataGrid" title="角色" style="display:none;">
+    <thead>
+        <tr>
+            <th data-options="field:'chk',checkbox:true"></th>
+            <th data-options="field:'rolename',sortable:true,width:60"> 角色名称</th>
+            <th data-options="field:'roledescription',sortable:true,width:60"> 角色描述</th>
+            <th data-options="field:'remarks',sortable:true,width:60"> 角色备注</th>
+        </tr>
+    </thead>
+    <tr>
+</table>
+<div style="display:none;">
+    @Html.Partial("Edit")
+    @Html.Partial("Details")
+    @Html.Partial("Search")
+    @Html.Partial("EditRight")
+    @Html.Partial("UserRole")
+</div>
+

@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HKSJRecruitment.Models", "HKSJRecruitment.Models\HKSJRecruitment.Models.csproj", "{090B8F60-15CE-4C8D-9EF7-014527EA19CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HKSJRecruitment.Facade", "HKSJRecruitment.Facade\HKSJRecruitment.Facade.csproj", "{B19CD7AC-D0ED-4259-B890-712A5B81FF14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HKSJRecruitment.Web", "HKSJRecruitment.Web\HKSJRecruitment.Web.csproj", "{B5FB4D93-D831-4449-93C5-EB760798840E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HKSJRecruitment.DemoTest", "HKSJRecruitment.DemoTest\HKSJRecruitment.DemoTest.csproj", "{6CD52991-0166-43EF-977D-92B546758B60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Mvc", "Common.Mvc\Common.Mvc.csproj", "{54BA2D5C-8CA0-40B3-A7DF-EF4B002C5657}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{090B8F60-15CE-4C8D-9EF7-014527EA19CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{090B8F60-15CE-4C8D-9EF7-014527EA19CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{090B8F60-15CE-4C8D-9EF7-014527EA19CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{090B8F60-15CE-4C8D-9EF7-014527EA19CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B19CD7AC-D0ED-4259-B890-712A5B81FF14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B19CD7AC-D0ED-4259-B890-712A5B81FF14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B19CD7AC-D0ED-4259-B890-712A5B81FF14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B19CD7AC-D0ED-4259-B890-712A5B81FF14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5FB4D93-D831-4449-93C5-EB760798840E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5FB4D93-D831-4449-93C5-EB760798840E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5FB4D93-D831-4449-93C5-EB760798840E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5FB4D93-D831-4449-93C5-EB760798840E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CD52991-0166-43EF-977D-92B546758B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD52991-0166-43EF-977D-92B546758B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD52991-0166-43EF-977D-92B546758B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD52991-0166-43EF-977D-92B546758B60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54BA2D5C-8CA0-40B3-A7DF-EF4B002C5657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54BA2D5C-8CA0-40B3-A7DF-EF4B002C5657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54BA2D5C-8CA0-40B3-A7DF-EF4B002C5657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54BA2D5C-8CA0-40B3-A7DF-EF4B002C5657}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

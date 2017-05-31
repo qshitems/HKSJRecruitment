@@ -1,0 +1,64 @@
+﻿<div id="winImport" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-33'" style="height:180px">
+    <form id="frmImport" enctype="multipart/form-data">
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td><label class="easyui-label">选择文件：</label></td>
+                <td>
+                    <input type="file" id="fileNeed" name="fileNeed" required="required" />
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">模板下载：</label></td>
+                <td><a href="/file/招聘需求导入模版.xlsx">招聘需求导入模版下载</a></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a id="btnWinImportOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnWinImportCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript" src="~/Content/scripts/ajaxfileupload.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnImportData").click(function () {
+            $("#winImport").window("setTitle", titleSuffix + "导入");
+            $("#winImport").window("open");
+        });
+        $("#btnWinImportOk").click(function () {
+            if ($.trim($("#fileNeed").val()) == "") {
+                $.messager.show({ title: '导入提示', msg: "请选择文件"});
+                return;
+            }
+            var url = '@Url.Action("ImportData")';
+            $.messager.progress({ title: "请稍候..." });
+            $.ajaxFileUpload({
+                url: url,
+                secureuri: false,
+                fileElementId: 'fileNeed',
+                dataType: 'json',
+                success: function (data, status) {
+                    $.messager.progress("close");
+                    var result = data;
+                    if (result.result) {
+                        $.messager.show({ title: '导入提示', msg: (result.msg == undefined || result.msg == '') ? '导入成功' : result.msg });
+                        $(dgid).datagrid('load');
+                        $("#winImport").window("close");
+                    } else {
+                        $.messager.show({ title: '导入提示', msg: (result.msg == undefined || result.msg == '') ? '导入失败' : result.msg });
+                    }
+                },
+                error: function (data, status, e) {
+                    $.messager.progress("close");
+                    $.messager.show({ title: '导入提示', msg: "导入失败," + e });
+                }
+            });
+        });
+        $("#btnWinImportCancel").click(function () {
+            $("#winImport").window("close");
+        });
+    });
+</script>

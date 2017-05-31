@@ -1,0 +1,102 @@
+﻿<div id="winQuery" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-search'" style="height:380px">
+    <form>
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td><label class="easyui-label">需求部门：</label></td>
+                <td>
+                    <select id="querydeptid" name="querydeptid" style="width:245px; height:34px;" class="easyui-control easyui-combobox"></select>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">需求职位：</label></td>
+                <td><select id="querypostid" name="querypostid" style="width:245px; height:34px;" class="easyui-control  easyui-combobox"></select></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">招聘人数：</label></td>
+                <td><input id="queryneedquantity" name="queryneedquantity" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'number'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">已招聘人数：</label></td>
+                <td><input id="queryhavebeenquantity" name="queryhavebeenquantity" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'number'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">需求状态：</label></td>
+                <td>
+                    <select id="queryishavebeen" name="queryishavebeen" style="width:245px; height:34px;" class="easyui-control  easyui-combobox"></select>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">面试官：</label></td>
+                <td><input id="querydemander" name="querydemander" type="text" class="easyui-control" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">截止时间：</label></td>
+                <td>
+                    <input id="querycuttimestart" name="querycuttimestart" type="text" style="width:120px; height:34px;" class="easyui-control easyui-datebox" />-<input id="querycuttimeend" name="querycuttimeend" type="text" style="width:120px; height:34px;" class="easyui-control  easyui-datebox" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a id="btnWinExportOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)" style="width:80px; display:none;" target="_blank">导出</a>
+                    <a id="btnWinQueryOk" class="easyui-linkbutton easyui-btn" href="javascript:void(0)" style="width:80px;">确定</a>
+                    <a id="btnWinQueryReset" class="easyui-linkbutton" href="javascript:void(0)" style="width:80px;">重置</a>
+                    <a id="btnWinQueryCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:80px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    $("#queryishavebeen").combobox({
+        valueField: 'id',
+        textField: 'text',
+        data: [{ id: '0', text: '未完成' }, { id: '1', text: '已完成' }, { id: '2', text: '全部' }]
+    });
+    //$("html").keydown(function (e) {
+    //    if (e.keyCode == 13) {
+    //        $("#btnWinQueryOk").click();
+    //        return false;
+    //    }
+    //});
+    function keySearch() {
+        if (event.keyCode == 13) {
+            $("#btnWinQueryOk").click();
+            return false;
+        }
+    }
+    $(function () {
+     
+        $("#btnSearch").unbind().click(function () {
+            $("#btnWinExportOk").hide();
+            $("#btnWinQueryOk").show();
+            $(searchid).window("setTitle", titleSuffix + "查询");
+            $(searchid).window("open");
+
+        });
+        $("#btnExportData").unbind().click(function () {
+            $("#btnWinQueryOk").hide();
+            $("#btnWinExportOk").show();
+            $(searchid).window("setTitle", titleSuffix + "导出");
+            $(searchid).window("open");
+        });
+        $("#btnWinExportOk").click(function () {
+            var queryParams = "?tm=";
+            var arr = $("#winQuery form").serializeArray();
+            $.each(arr, function () {
+                if (this.value) {
+                    queryParams += "&" + this.name + "=" + escape(this.value);
+                }
+            });
+            $(this).attr("href", '@Url.Action("ExportData")' + queryParams);
+            return true;
+        });
+    });
+    function SearchReset() {
+        $("#querydeptid").combobox("setValue", "");
+        $("#querypostid").combobox("setValue", "");
+        $("#queryishavebeen").combobox("setValue", "");
+        $("#querycuttimestart").datebox("setValue", "");
+        $("#querycuttimeend").datebox("setValue", "");
+    }
+</script>

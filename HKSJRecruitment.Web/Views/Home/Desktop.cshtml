@@ -1,0 +1,72 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>桌面</title>
+    <meta charset="utf-8" />
+    <link href="/Content/easyui/themes/bootstrap/easyui.css" rel="stylesheet" />
+    <link href="/Content/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="/Content/easyui/themes/easyuitype.css" rel="stylesheet" />
+    <script src="/Content/scripts/jquery-1.8.2.js" type="text/javascript"></script>
+    <script src="/Content/easyui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="~/Content/easyui/jquery.portal.js" type="text/javascript"></script>
+    <script src="/Content/easyui/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="/Content/easyui/jquery.easyui.validateextend.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#divPortal").portal({
+                border: false,
+                fit: true
+            });
+            $("#dgNeed").datagrid({
+                url: '@Url.Action("List","Hr_Need")',
+                idField: "id",
+                queryParams: {},
+                fit: true,
+                fitColumns: true,
+                striped: true,
+                singleSelect: false,
+                remoteSort: true,
+                multiSort: true,
+                pageSize: 100,
+                method: 'post',
+                pageSize: 20,
+                pagination: true,
+                showFooter: true
+            });
+        });
+    </script>
+</head>
+<body class="easyui-layout">
+    <div data-options="region:'center'" style="border:none;">
+        <div id="divPortal" style="position:relative">
+            <div style="width:50%;">
+                <div collapsible="true" title="招聘需求" style="height:300px; ">
+                    <table id="dgNeed" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th data-options="field:'deptname',width:60"> 需求部门</th>
+                                <th data-options="field:'postname',width:60"> 需求岗位</th>
+                                <th data-options="field:'needquantity',sortable:true,width:60"> 招聘人数</th>
+                                <th data-options="field:'demander',sortable:true,width:60"> 需求人</th>
+                                <th data-options="field:'cuttime',sortable:true,width:60"> 截止时间</th>
+                                <th data-options="field:'createby',sortable:true,width:60"> 创建人</th>
+                                <th data-options="field:'createtime',sortable:true,width:60"> 创建时间</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                    </table>
+                </div>
+            </div>
+            <div style="width:50%;">
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

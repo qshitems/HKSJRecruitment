@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@section scripts
+{
+    <script type="text/javascript">
+        var tgFlag = true;
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "菜单";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+        $(function () {
+            $('#dataGrid').treegrid({
+                method: 'get',
+                url: urlList,
+                idField: 'id',
+                treeField: 'menutext',
+                toolbar: '#tb',
+                checkbox: true,
+                checkOnSelect: true,
+                selectOnCheck: true,
+                rownumbers: true,
+                lines: true,
+                columns: [[
+                    { title: 'id', field: 'id', width: 60, checkbox: true },
+                    { title: '菜单名称', field: 'menutext', width: 180 },
+                    { title: '菜单编号', field: 'menucode', width: 60 },
+                    { title: '菜单Url', field: 'menuurl', width: 80 },
+                    { title: '菜单图标', field: 'menuicon', width: 80 },
+                    { title: '菜单样式', field: 'menuclass', width: 80 },
+                    { title: '排序号', field: 'seqno', width: 80 },
+                    { title: '是否显示', field: 'isshowdesc', width: 80 }
+                ]],
+                onContextMenu: function (e, rowIndex, rowData) {
+                    e.preventDefault();
+                    if (!rowContextMenu) {
+                        createrowContextMenu();
+                    }
+                    rowContextMenu.data("rowData", rowData);
+                    rowContextMenu.menu("show", {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                },
+                onLoadSuccess: function () {
+                    //$('#dataGrid').treegrid('collapseAll');
+                }
+            });
+        });
+    </script>
+}
+<div id="dataGrid" style="display:none;"></div>
+<div style="display:none;">
+    @Html.Partial("Edit")
+    @Html.Partial("Details")
+</div>

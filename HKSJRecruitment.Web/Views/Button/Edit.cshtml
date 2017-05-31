@@ -1,0 +1,99 @@
+﻿<div id="winEdit" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-add'" style="height:480px;">
+    <form id="frmEdit" method="post">
+        <input type="hidden" value="0" id="id" name="id" />
+        <table style="margin-left:auto;margin-right:auto;width:98%;">
+            <tr>
+                <td><label class="easyui-label">所属菜单：</label></td>
+                <td><select id="menuid" name="menuid" style="width:245px; height:34px;" class="easyui-control easyui-validatebox" data-options="required:true"></select></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">按钮文本：</label></td>
+                <td><input id="buttontext" name="buttontext" type="text" class="easyui-control easyui-validatebox" data-options="required:true,validType:'length[1,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">UrL：</label></td>
+                <td><input id="handlerurl" name="handlerurl" type="text" class="easyui-control  easyui-validatebox" data-options="required:true,validType:'length[1,100]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">按钮页面Id：</label></td>
+                <td><input id="buttonjsid" name="buttonjsid" type="text" class="easyui-control easyui-validatebox" data-options="required:true,validType:'length[1,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">图标：</label></td>
+                <td><input id="buttonicon" name="buttonicon" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'length[0,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">样式：</label></td>
+                <td><input id="buttonclass" name="buttonclass" type="text" class="easyui-control easyui-validatebox" data-options="required:false,validType:'length[0,20]'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">排序：</label></td>
+                <td><input id="seqno" name="seqno" type="text" value="1" class="easyui-control easyui-validatebox" data-options="required:true,validType:'number'" /></td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">是否显示：</label></td>
+                <td>
+                    <select id="isshow" name="isshow" class="easyui-control easyui-validatebox" style="width:245px; height:34px;" data-options="required:true">
+                        <option value="1" selected="selected">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">备注：</label></td>
+                <td>
+                    <textarea id="remarks" name="remarks" class="easyui-control easyui-validatebox" data-options="required:false,validType:'length[0,50]'" style="width:220px; height:60px"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-top:10px;">
+                    <a id="btnWinEditOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+                    <a id="btnWinEditCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var data = menudto;
+        var groups = [];
+        var items = [];
+        $(data).each(function () {
+            if (this.parentid == 0) {
+                groups.push(this);
+            } else {
+                items.push(this);
+            }
+        });
+        $(groups).each(function () {
+            var opt = $("<optgroup label='" + this.menutext + "'>");
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].parentid == this.id) {
+                    $("<option value='" + items[i].id + "'>" + items[i].menutext + "</option>").appendTo(opt);
+                }
+            }
+            $("#menuid").append(opt.clone());
+            $("#querymenuid").append("<option value='-1'>全部</option>");
+            $("#querymenuid").append(opt.clone());
+        });
+    });
+    function EditFinish(data) {
+        if (data.result) {
+            data.dto.isshow = data.dto.isshow == 1 ? "是" : "否";
+            var menu = $("#menuid option[value='" + data.dto.menuid + "']");
+            data.dto.menuid = menu.closest('optgroup').attr("label") + "-" + menu.text();
+            $.messager.show({ title: '编辑提示', msg: (data.msg == undefined || data.msg == '') ? '编辑成功' : data.msg });
+            $(editid).window("close");
+            if ($(editid).data("edit")) {
+                var rowIndex = $(dgid).datagrid('getRowIndex', data.dto[dgKey]);
+                $(dgid).datagrid('updateRow', { index: rowIndex, row: data.dto });
+            } else {
+                $(dgid).datagrid('insertRow', { index: 0, row: data.dto });
+            }
+        } else {
+            $.messager.show({ title: '编辑提示', msg: (data.msg == undefined || data.msg == '') ? '编辑失败' : "编辑失败," + data.msg });
+        }
+    }
+</script>

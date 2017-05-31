@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>惠信招聘管理系统</title>
+    <meta charset="utf-8" />
+    <meta name="renderer" content="webkit">
+    <link href="/Content/easyui/themes/bootstrap/easyui.css" rel="stylesheet" />
+    <link href="/Content/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="/Content/easyui/themes/easyuitype.css" rel="stylesheet" />
+    <script src="/Content/scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="/Content/easyui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="/Content/easyui/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="~/Content/scripts/json2.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $.map(['validatebox', 'textbox', 'filebox', 'searchbox',
+		'combo', 'combobox', 'combogrid', 'combotree',
+		'datebox', 'datetimebox', 'numberbox',
+		'spinner', 'numberspinner', 'timespinner', 'datetimespinner'], function (plugin) {
+		    if ($.fn[plugin]) {
+		        $.fn[plugin].defaults.missingMessage = function () {
+		            var td = $(this).closest("td").prev("td");
+		            if (td.length == 0) {
+		                return "该输入项为必输项";
+		            }
+		            else {
+		                return td.text().replace(/[:|：]$/i, "") + "不能为空";
+		            }
+		        }
+		    }
+		});
+        $(function () {
+            $("#imgVerifyCode").click(function () {
+                $(this).attr("src", '@Url.Action("VerifyCode", "Account")?' + Math.random());
+            });
+            $("#btnOK").click(function () {
+                $.messager.progress({ title: "请稍候..." });
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/Login",
+                    data: $("#frmLogin").serialize(),
+                    dataType: "json",
+                    success: function (data) {
+                        $.messager.progress("close");
+                        $.messager.show({ title: '登录结果', msg: data.msg });
+                        if (data.result) {
+                            parent.location.href = '@Url.Action("Index","Home")';
+                        }
+                        else {
+                            $("#imgVerifyCode").click();
+                        }
+                    },
+                    error: function () {
+                        $.messager.progress("close");
+                        $.messager.show({ title: '登录结果', msg: '登录错误' });
+                    }
+                });
+            });
+            $("body").keydown(function (e) {
+                if (e.keyCode == 13) {
+                    $("#btnOK").click();
+                    return false;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div style="display:none;">
+        <div class="easyui-window" title="惠信招聘管理系统" data-options="collapsible:false,minimizable:false,maximizable:false,closable:false,resizable:false,modal:true" style="width: 400px; height:260px; padding: 15px;">
+            <form id="frmLogin" method="post">
+                <table style="margin-left:auto;margin-right:auto;width:98%;">
+                    <tr>
+                        <td><label class="easyui-label">用户名：</label></td>
+                        <td><input id="username" name="username" type="text" class="easyui-control easyui-validatebox" data-options="required:true" /></td>
+                    </tr>
+                    <tr>
+                        <td><label class="easyui-label">密码：</label></td>
+                        <td><input id="userpwd" name="userpwd" type="password" class="easyui-control easyui-validatebox" data-options="required:true" /></td>
+                    </tr>
+                    <tr>
+                        <td><label class="easyui-label">验证码：</label></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <input id="verifycode" name="verifycode" type="text" class="easyui-control" style="width:120px;display:inline-block;" />
+                                    </td>
+                                    <td>
+                                        <div style="display:inline-block; margin-left:5px; height:34px;vertical-align:middle;"><img src='@Url.Action("VerifyCode", "Account")' id="imgVerifyCode" /></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td style="padding-top:10px;">
+                            <a id="btnOK" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">登录</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

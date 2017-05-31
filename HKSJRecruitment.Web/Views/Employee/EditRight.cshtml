@@ -1,0 +1,84 @@
+﻿<div id="winEditRight" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-right'" style="height:300px;">
+    <form>
+        <input type="hidden" id="uid" name="uid" value="0" />
+        <input type="hidden" id="roleids" name="roleids" value="" />
+        <table style="margin-left:auto;margin-right:auto;width:95%; " align="center">
+            <tr>
+                <td style="width:80px;">
+                    <label class="easyui-label">姓名：</label>
+                </td>
+                <td>
+                    <label id="spname"></label>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:80px;">
+                    <label class="easyui-label">角色：</label>
+                </td>
+                <td id="tdRole"></td>
+            </tr>
+        </table>
+        <div style="margin-top:10px; margin-left:auto;margin-right:auto; text-align:center;">
+            <a id="btnWinEditRightOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+            <a id="btnWinEditRightCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    var urlUserRole = '@Url.Action("UserRole")';
+    $(function () {
+        $("#btnRightEdit").click(function () {
+            var rowData = $(dgid).datagrid("getSelected");
+            if (rowData == null) {
+                $.messager.alert("用户授权", '请选择要授权的员工!');
+                return;
+            }
+            $("#winEditRight #uid").val(rowData["uid"]);
+            $("#winEditRight #spname").text(rowData["name"]);
+            $.ajax({
+                type: "POST",
+                url: urlUserRole,
+                data: "uid=" + $("#winEditRight #uid").val(),
+                dataType: "json",
+                success: function (resp) {
+                    if (!resp.result) {
+                        $.messager.show({ title: "用户授权", msg: result.msg });
+                        return;
+                    }
+                    var html = "";
+                    $(resp.dtos).each(function () {
+                        html += "<span style='display:inline-block;width:150px; text-align:left;'><input type='checkbox' id='chkRole" + this.roleid + "' name='chkRole" + this.roleid + "' value='" + this.roleid + "' " + (this.isright ? "checked" : "") + " /><label style='margin-left:2px;' for='chkRole" + this.roleid + "'>" + this.rolename + "</label></span>";
+                    });
+                    $("#tdRole").html(html);
+                    $("#winEditRight").data("edit", true);
+                    $("#winEditRight").window("setTitle", "角色授权");
+                    $("#winEditRight").window("open");
+                }
+            });
+        });
+        $("#btnWinEditRightOk").click(function () {
+            roles = "";
+            $("#winEditRight :checked").each(function () {
+                roles += $(this).val() + ",";
+            });
+            $("#winEditRight #roleids").val(roles);
+            $.messager.progress({ title: "请稍候..." });
+            $("#winEditRight form").form("submit", {
+                url: '@Url.Action("RightEdit")',
+                success: function (data) {
+                    $.messager.progress("close");
+                    var result = JSON.parse(data);
+                    if (result.result) {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑成功' : result.msg });
+                        $("#winEditRight").window("close");
+                    } else {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑失败' : "编辑失败," + result.msg });
+                    }
+                }
+            });
+        });
+        $("#btnWinEditRightCancel").click(function () {
+            $("#winEditRight").window("close");
+        });
+    });
+</script>

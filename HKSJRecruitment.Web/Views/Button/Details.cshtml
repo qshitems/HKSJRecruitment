@@ -1,0 +1,72 @@
+﻿<div id="winDetail" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-ok'" style="width: 420px; height: 270px; padding: 5px; background: #fafafa;">
+    <form>
+        <table style="margin-left:auto;margin-right:auto;width:90%;">
+            <tr>
+                <td><label class="easyui-label">所属菜单：</label></td>
+                <td>
+                    <label class="control-label" id="spmenuid"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">菜单文本：</label></td>
+                <td>
+                    <label class="control-label" id="spbuttontext"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">UrL：</label></td>
+                <td>
+                    <label class="control-label" id="sphandlerurl"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">按钮页面Id：</label></td>
+                <td>
+                    <label class="control-label" id="spbuttonjsid"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">图标：</label></td>
+                <td>
+                    <label class="control-label" id="spbuttonicon"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">样式：</label></td>
+                <td>
+                    <label class="control-label" id="spbuttonclass"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">排序：</label></td>
+                <td>
+                    <label class="control-label" id="spseqno"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">是否显示：</label></td>
+                <td>
+                    <label class="control-label" id="spisshow"></label>
+                </td>
+            </tr>
+            <tr>
+                <td><label class="easyui-label">备注：</label></td>
+                <td>
+                    <label class="control-label" id="spremarks"></label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a id="btnWinDetailClose" class="easyui-linkbutton easyui-btn" href="javascript:void(0)">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    function LoadDetailDataSuccess(data) {
+        $("#spmenuid").text($("#menuid option[value='" + data.menuid + "']").text());
+        $("#spisshow").text(data.isshow == 0 ? "否" : "是");
+    }
+</script>

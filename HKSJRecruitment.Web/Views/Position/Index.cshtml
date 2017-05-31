@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@section scripts
+{
+    <script type="text/javascript">
+        var dgKey = "id";
+        var dgid = "#dataGrid";
+        var editid = "#winEdit";
+        var detailid = "#winDetail";
+        var searchid = "#winQuery";
+        var titleSuffix = "职务";
+        var urlList = '@Url.Action("List")';
+        var urlAdd = '@Url.Action("Add")';
+        var urlEdit = '@Url.Action("Edit")';
+        var urlDetail = '@Url.Action("Detail")';
+        var urlDeleteMulti = '@Url.Action("DeleteMulti")';
+    </script>
+}
+<table id="dataGrid" title="职务" style="display:none;">
+    <thead>
+        <tr>
+            <th data-options="field:'chk',checkbox:true"></th>
+            <th data-options="field:'positionname',sortable:true,width:120"> 职务名称</th>
+            <th data-options="field:'positionlevel',sortable:true,width:60"> 级别</th>
+        </tr>
+    </thead>
+    <tr>
+</table>
+<div style="display:none;">
+    @Html.Partial("Edit")
+</div>
+

@@ -1,0 +1,81 @@
+﻿<div id="winEditRight" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-print'" style="width: 800px; height:600px;">
+    <form>
+        <input type="hidden" id="roleid" name="roleid" value="0" />
+        <input type="hidden" id="butIds" name="butIds" value="" />
+        <div id="dataMenuButton"></div>
+        <div style="margin-top:5px; margin-bottom:20px; margin-left:auto;margin-right:auto; text-align:center;">
+            <a id="btnWinEditRightOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+            <a id="btnWinEditRightCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    var urlMenuButton = '@Url.Action("MenuButton")';
+    $(function () {
+        $("#btnRightEdit").click(function () {
+            var rowData = $(dgid).datagrid("getSelected");
+            if (rowData == null) {
+                $.messager.alert("角色", '请选择要授权的角色!');
+                return;
+            }
+            $("#winEditRight #roleid").val(rowData[dgKey]);
+            var butids = "";
+            $('#dataMenuButton').treegrid({
+                method: 'get',
+                url: urlMenuButton + '?roleId=' + rowData[dgKey],
+                idField: 'id',
+                treeField: 'menutext',
+                lines: true,
+                columns: [[
+                    { title: '菜单名称', field: 'menutext', width: 180 },
+                    {
+                        title: '按钮权限', field: 'buttontext', width: 590, formatter: function (value, row, index) {
+                            if (value != undefined && value != "") {
+                                var html = "";
+                                var lines = value.split(';')
+                                $(lines).each(function () {
+                                    var items = this.split(',');
+                                    btnids = items[0] + ",";
+                                    html += "<span style='margin-left:10px;'><input type='checkbox' id='chkButton" + items[0] + "' name='chkButton" + items[0] + "' value='" + items[0] + "' " + (items[2] == 0 ? "" : "checked") + " /><label style='margin-left:2px;' for='chkButton" + items[0] + "'>" + items[1] + "</label></span>";
+                                });
+                                return html;
+                            }
+                            return "&nbsp;"
+                        }
+                    }
+                ]],
+                onLoadSuccess: function () {
+                    $('#dataMenuButton').treegrid('collapseAll');
+                    $("#winEditRight #butIds").val(butids);
+                }
+            });
+            $("#winEditRight").data("edit", true);
+            $("#winEditRight").window("setTitle", "角色授权");
+            $("#winEditRight").window("open");
+        });
+        $("#btnWinEditRightOk").click(function () {
+            butids = "";
+            $("#winEditRight :checked").each(function () {
+                butids += $(this).val() + ",";
+            });
+            $("#winEditRight #butIds").val(butids);
+            $("#winEditRight form").form("submit", {
+                url: '@Url.Action("RightEdit")',
+                success: function (data) {
+                    $.messager.progress("close");
+                    var result = JSON.parse(data);
+                    if (result.result) {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑成功' : result.msg });
+                        $("#winEditRight").window("close");
+                    } else {
+                        $.messager.show({ title: '编辑提示', msg: (result.msg == undefined || result.msg == '') ? '编辑失败' : "编辑失败," + result.msg });
+                    }
+                }
+            });
+        });
+        $("#btnWinEditRightCancel").click(function () {
+            $("#winEditRight").window("close");
+        });
+    });
+</script>
+

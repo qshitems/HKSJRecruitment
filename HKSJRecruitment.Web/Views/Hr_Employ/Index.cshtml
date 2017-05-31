@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<table id="dataGrid" title="招聘录用" style="display:none;">
+    <thead>
+        <tr>
+            <th data-options="field:'name',sortable:true,width:60"> 姓名</th>
+            <th data-options="field:'tel',sortable:true,width:60"> 电话</th>
+            <th data-options="field:'dptname',sortable:true,width:70"> 部门</th>
+            <th data-options="field:'postname',sortable:true,width:70"> 职位</th>
+            <th data-options="field:'entryname',sortable:true,width:50"> 入职状态</th>
+            <th data-options="field:'strinterview',sortable:true,width:60"> 面试时间</th>
+            <th data-options="field:'interviewer',sortable:true,width:50 "> 面试官</th>
+            <th data-options="field:'userurl',sortable:true,width:80"> 简历地址</th>
+            <th data-options="field:'strhiretime',sortable:true,width:50"> 报到时间</th>
+            <th data-options="field:'email',sortable:true,width:80"> 邮箱</th>
+            <th data-options="field:'needsname',sortable:true,width:80"> 招聘需求</th>
+            <th data-options="field:'remark',sortable:true,width:100"> 备注</th>
+            <th data-options="field:'createby',sortable:true,width:60"> 创建人</th>
+            <th data-options="field:'createtime',sortable:true,width:60"> 创建时间</th>
+        </tr>
+    </thead>
+    <tr>
+</table>
+
+<div style="display:none;">
+    @Html.Partial("Edit")
+    @Html.Partial("Search")
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+    var dgKey = "id";
+    var dgid = "#dataGrid";
+    var editid = "#winEdit";
+    var detailid = "#winDetail";
+    var searchid = "#winQuery";
+    var titleSuffix = "招聘录用";
+    var urlList = '@Url.Action("List")';
+    var urlAdd = '@Url.Action("Add")';
+    var urlEdit = '@Url.Action("Edit")';
+    var urlDetail = '@Url.Action("Detail")';
+    var urlDeptList = '@Url.Action("ListDepartment","Department")';
+    var urlPostList = '@Url.Action("ListPosition","Post")';
+
+    $(function () {
+        loadTree();
+        getPostData("postid");
+        getPostData("querypostid");
+        $(dgid).datagrid({ singleSelect: true });   // 定义列表只能单选一条记录
+
+        $("#entrytype").combobox({
+            valueField: "id",
+            textField: "text",
+            data: [{ id: 1, text: '待入职' }, { id: 2, text: '未入职' }, { id: 3, text: '已入职' }]
+        });
+        $("#querytype").combobox({
+            valueField: "id",
+            textField: "text",
+            data: [{ id: 1, text: '待入职' }, { id: 2, text: '未入职' }, { id: 3, text: '已入职' }]
+        });
+    });
+    function loadTree() {
+        $.ajax({
+            type: "POST",
+            url: urlDeptList,
+            data: {},
+            dataType: "json",
+            success: function (resp) {
+                var data = getTreeData(resp.rows);
+                $("#dptid").combotree({
+                    lines: true,
+                    data: data
+
+                });
+                $("#querydptid").combotree({
+                    lines: true,
+                    data: data
+                });
+
+            }
+        });
+    }
+    function getTreeData(rows) {
+        var data = [];
+        $(rows).each(function () {
+            var obj = {};
+            obj.id = this.id;
+            obj.text = this.deptname;
+            obj.iconCls = this.depticon;
+            obj.state = 'open';
+            obj.attributes = {};
+            obj.children = [];
+            for (var key in this) {
+                obj.attributes[key] = this[key];
+            }
+            if (this.parentid > 0) {
+                var parentNode = getParentNode(data, this.parentid);
+                if (parentNode === undefined) {
+                    data.push(obj);
+                } else {
+                    parentNode.push(obj);
+                }
+            }
+            else {
+                data.push(obj);
+            }
+        });
+        return data;
+    }
+    function getParentNode(data, pid) {
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].attributes["id"] == pid) {
+                return data[i].children;
+            } else if (data[i].children.length > 0) {
+                var ret = getParentNode(data[i].children, pid);
+                if (ret != undefined) {
+                    return ret;
+                }
+            }
+        }
+        return undefined;
+    }
+    function getPostData(obj, defaultValue) {
+        $.ajax({
+            type: "POST",
+            url: urlPostList,
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                $("#" + obj).combobox({
+                    valueField: "id",
+                    textField: "positionname",
+                    editable: true,
+                    data: data.rows
+                });
+            }
+        });
+
+    };
+    </script>
+}

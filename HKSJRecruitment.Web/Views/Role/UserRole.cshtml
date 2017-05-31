@@ -1,0 +1,180 @@
+﻿<div id="winEditUserRight" class="easyui-window" title="title" data-options="closed:true,closable:true,collapsible:false,minimizable:false,maximizable:false,modal:true,iconCls:'icon-right'" style="width: 800px; height:600px;">
+    <form>
+        <input type="hidden" id="roleids" name="roleids" value="0" />
+        <input type="hidden" id="userids" name="userids" value="" />
+        <div class="easyui-layout" style="height:500px;">
+            <div data-options="region:'west',title:'组织构架'" style="height:510px; width:200px;">
+                <div id="divDeptTree">
+
+                </div>
+            </div>
+            <div data-options="region:'center',title:'员工'">
+                <table id="dgUser" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th data-options="field:'chk',checkbox:true"></th>
+                            <th data-options="field:'name',sortable:true,width:200"> 姓名</th>
+                            <th data-options="field:'uid',sortable:true,width:200"> 账号</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                </table>
+            </div>
+        </div>
+        <div style="margin-top:5px; margin-bottom:20px; margin-left:auto;margin-right:auto; text-align:center;">
+            <a id="btnWinUserRightOk" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">确定</a>
+            <a id="btnWinUserRightCancel" class="easyui-linkbutton" href="javascript:void(0)" style="width:100px;">关闭</a>
+        </div>
+    </form>
+    <div id="tbQuery">
+        <table>
+            <tr>
+                <td>姓名/账号:</td>
+                <td><input type="text" id="queryusername" name="queryusername" class="easyui-textbox" /></td>
+                <td><a id="btnWinUserQueryOk" class="easyui-linkbutton" href="javascript:void(0)">查询</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    var urlDeptList = '@Url.Action("ListDepartment","Department")';
+    var urlEmpt = '@Url.Action("ListEmployee", "Employee")';
+    $(function () {
+        loadTree();
+        loadEmployee(-1, "");
+        function loadTree() {
+            $.ajax({
+                type: "POST",
+                url: urlDeptList,
+                data: {},
+                dataType: "json",
+                success: function (resp) {
+                    var data = getTreeData(resp.rows);
+                    $("#divDeptTree").tree({
+                        lines: true,
+                        data: data,
+                        animate: true,
+                        onClick: function (node) {
+                            $("#queryusername").textbox("setValue", "");
+                            var deptid = node.id;
+                            if (node.attributes.parentid == 0) {
+                                deptid = 0;
+                            }
+                            loadEmployee(deptid, "");
+                        }
+                    });
+                }
+            });
+        }
+        function getTreeData(rows) {
+            var data = [];
+            $(rows).each(function () {
+                var obj = {};
+                obj.id = this.id;
+                obj.text = this.deptname;
+                obj.iconCls = this.depticon;
+                obj.state = 'open';
+                obj.attributes = {};
+                obj.children = [];
+                for (var key in this) {
+                    obj.attributes[key] = this[key];
+                }
+                if (this.parentid > 0) {
+                    var parentNode = getParentNode(data, this.parentid);
+                    if (parentNode === undefined) {
+                        data.push(obj);
+                    } else {
+                        parentNode.push(obj);
+                    }
+                }
+                else {
+                    data.push(obj);
+                }
+            });
+            return data;
+        }
+        function getParentNode(data, pid) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].attributes["id"] == pid) {
+                    return data[i].children;
+                } else if (data[i].children.length > 0) {
+                    var ret = getParentNode(data[i].children, pid);
+                    if (ret != undefined) {
+                        return ret;
+                    }
+                }
+            }
+            return undefined;
+        }
+        function loadEmployee(deptid, name) {
+            $("#dgUser").datagrid({
+                url: urlEmpt,
+                queryParams: { deptid: deptid, name: name },
+                pagination: true,
+                toolbar: "#tbQuery"
+            });
+        }
+        $("#btnUserRight").click(function () {
+            var rowData = $(dgid).datagrid("getSelected");
+            if (rowData == null) {
+                $.messager.alert("角色", '请选择角色!');
+                return;
+            }
+            $("#dgUser").datagrid("uncheckAll");
+            $("#winEditUserRight").data("edit", true);
+            $("#winEditUserRight").window("setTitle", "包含用户");
+            $("#winEditUserRight").window("open");
+        });
+        $("#btnWinUserQueryOk").click(function () {
+            var node = $("#divDeptTree").tree("getSelected");
+            var deptid = 0;
+            if (node != null) {
+                deptid = node.id;
+                if (node.attributes.parentid == 0) {
+                    deptid = 0;
+                }
+            }
+            var name = $("#queryusername").val();
+            loadEmployee(deptid, name);
+        });
+        $("#btnWinUserRightOk").click(function () {
+            var roleids = "";
+            var rowRows = $(dgid).datagrid("getChecked");
+            if (rowRows == null) {
+                $.messager.show({ title: '角色', msg: "请选择角色" });
+                return;
+            }
+            $(rowRows).each(function () {
+                roleids += this.id + ",";
+            });
+            $("#winEditUserRight #roleids").val(roleids);
+            var userids = "";
+            rowRows = $("#dgUser").datagrid("getChecked");
+            if (rowRows == null) {
+                $.messager.show({ title: '包含用户提示', msg: "请选择要包含的用户" });
+                return;
+            }
+            $(rowRows).each(function () {
+                userids += this.uid + ",";
+            });
+            $("#winEditUserRight #userids").val(userids);
+            $.messager.progress({ title: "请稍候..." });
+            $("#winEditUserRight form").form("submit", {
+                url: '@Url.Action("UserRight")',
+                success: function (data) {
+                    $.messager.progress("close");
+                    var result = JSON.parse(data);
+                    if (result.result) {
+                        $.messager.show({ title: '包含用户提示', msg: (result.msg == undefined || result.msg == '') ? '包含用户成功' : result.msg });
+                        $("#winEditUserRight").window("close");
+                    } else {
+                        $.messager.show({ title: '包含用户提示', msg: (result.msg == undefined || result.msg == '') ? '包含用户失败' : result.msg });
+                    }
+                }
+            });
+        });
+        $("#btnWinUserRightCancel").click(function () {
+            $("#winEditUserRight").window("close");
+        });
+    });
+</script>
